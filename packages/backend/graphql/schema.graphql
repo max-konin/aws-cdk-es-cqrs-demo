@@ -1,0 +1,28 @@
+type Account {
+  id: ID!
+  balance: Int!
+}
+
+input OpenAccountInput {
+  accountId: ID!
+}
+
+input CreditAccountInput {
+  accountId: ID!
+  amount: Int!
+}
+
+input DebitAccountInput {
+  accountId: ID!
+  amount: Int!
+}
+
+type Mutation {
+  openAccount(input: OpenAccountInput): Account
+  debitAccount(input: DebitAccountInput): Account
+  creditAccount(input: CreditAccountInput): Account
+}
+
+type Query {
+  getAllAccounts: [Account]!
+}
