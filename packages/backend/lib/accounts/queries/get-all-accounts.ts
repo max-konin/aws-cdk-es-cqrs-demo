@@ -6,9 +6,11 @@ interface ReadStoreConfig {
 }
 
 export const getAllAccounts = async (readStoreConfig: ReadStoreConfig) => {
-  const rawResults = await readStoreConfig.ddbClient.scan({
-    TableName: readStoreConfig.tableName
-  }).promise();
+  const rawResults = await readStoreConfig.ddbClient
+    .scan({
+      TableName: readStoreConfig.tableName,
+    })
+    .promise();
 
-  return rawResults.Items || []
-}
+  return rawResults.Items || [];
+};

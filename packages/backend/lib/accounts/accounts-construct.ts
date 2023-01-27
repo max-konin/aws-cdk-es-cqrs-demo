@@ -1,7 +1,7 @@
 import { Construct } from 'constructs';
 import { NodejsFunction } from 'aws-cdk-lib/aws-lambda-nodejs';
 import { aws_dynamodb } from 'aws-cdk-lib';
-import { DynamoEventSource } from 'aws-cdk-lib/aws-lambda-event-sources'
+import { DynamoEventSource } from 'aws-cdk-lib/aws-lambda-event-sources';
 import { StartingPosition } from 'aws-cdk-lib/aws-lambda';
 import { StreamViewType } from 'aws-cdk-lib/aws-dynamodb';
 
@@ -33,20 +33,20 @@ export class AccountsConstruct extends Construct {
     this.mutationsResolver = new NodejsFunction(this, 'mutations', {
       environment: {
         EVENTS_TABLE_NAME: eventsTable.tableName,
-      }
+      },
     });
 
     this.queriesResolver = new NodejsFunction(this, 'Queries', {
       environment: {
         ACCOUNTS_TABLE_NAME: accountsTable.tableName,
-      }
-    })
+      },
+    });
 
     const accountProjector = new NodejsFunction(this, 'projector', {
       environment: {
         ACCOUNTS_TABLE_NAME: accountsTable.tableName,
         EVENTS_TABLE_NAME: eventsTable.tableName,
-      }
+      },
     });
 
     accountsTable.grantFullAccess(accountProjector);

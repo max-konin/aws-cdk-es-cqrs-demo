@@ -1,4 +1,4 @@
-import { TestEvent } from "./test-helpers/test-event";
+import { TestEvent } from './test-helpers/test-event';
 
 describe('Framework | Event', () => {
   describe('.new', () => {
@@ -15,4 +15,4 @@ describe('Framework | Event', () => {
       });
     });
   });
-})
+});

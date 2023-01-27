@@ -1,18 +1,18 @@
-import { v4 } from "uuid";
-import { AggregateRoot } from "./aggregate-root";
-import { EventStore } from "./event-store";
-import { State, testAggregate } from "./test-helpers/test-aggregate";
-import { TestCommand } from "./test-helpers/test-command";
-import { TestCommandWithValidation } from "./test-helpers/test-command-with-validation";
-import { TestEvent } from "./test-helpers/test-event";
+import { v4 } from 'uuid';
+import { AggregateRoot } from './aggregate-root';
+import { EventStore } from './event-store';
+import { State, testAggregate } from './test-helpers/test-aggregate';
+import { TestCommand } from './test-helpers/test-command';
+import { TestCommandWithValidation } from './test-helpers/test-command-with-validation';
+import { TestEvent } from './test-helpers/test-event';
 
-describe('Framework | Aggregate Root', () => {  
+describe('Framework | Aggregate Root', () => {
   const eventStoreMock = {
     emitEvent: jest.fn().mockResolvedValue(null),
-    getEvents: jest.fn().mockResolvedValue([
-      new TestEvent({ myId: '1' }, v4()),
-    ]),
-  }
+    getEvents: jest
+      .fn()
+      .mockResolvedValue([new TestEvent({ myId: '1' }, v4())]),
+  };
 
   let aggregateRoot: AggregateRoot<'myId', State>;
 
@@ -34,13 +34,12 @@ describe('Framework | Aggregate Root', () => {
       const expectedState = {
         myId: entityId,
         eventsHandled: 1,
-      }
+      };
 
       beforeEach(async () => {
         const command = new TestCommandWithValidation({ myId: entityId });
         result = await aggregateRoot.dispatchCommand(command);
       });
-
 
       it('returns ok: true', () => {
         expect(result.ok).toBeTruthy();
@@ -52,10 +51,12 @@ describe('Framework | Aggregate Root', () => {
 
       it('calls eventStore.emitEvent', () => {
         expect(eventStoreMock.emitEvent).toBeCalled();
-      })
+      });
 
       it('stores the state of the new entity', () => {
-        expect(aggregateRoot.findStateByIdentityField(entityId)).toEqual(expectedState);
+        expect(aggregateRoot.findStateByIdentityField(entityId)).toEqual(
+          expectedState
+        );
       });
     });
 
@@ -77,7 +78,7 @@ describe('Framework | Aggregate Root', () => {
 
   describe('#loadStatesFromEventStore', () => {
     it('applies events from the event store', async () => {
-      const entityId = '1'
+      const entityId = '1';
 
       await aggregateRoot.loadStatesFromEventStore(entityId);
 

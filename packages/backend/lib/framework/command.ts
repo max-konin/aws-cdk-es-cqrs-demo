@@ -1,6 +1,9 @@
-import { ZodObject, ZodRawShape } from "zod";
+import { ZodObject, ZodRawShape } from 'zod';
 
-export abstract class Command<I extends string = 'id', T extends Record<I, string> = Record<I, string>> {
+export abstract class Command<
+  I extends string = 'id',
+  T extends Record<I, string> = Record<I, string>
+> {
   schema?: ZodObject<{}>;
   abstract commandName: string;
   abstract identityBy: I;
@@ -9,7 +12,7 @@ export abstract class Command<I extends string = 'id', T extends Record<I, strin
 
   get entityId() {
     return this._data[this.identityBy];
-  };
+  }
 
   get isValid() {
     if (!this.schema) return true;

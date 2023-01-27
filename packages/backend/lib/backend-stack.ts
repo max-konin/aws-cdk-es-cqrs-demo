@@ -10,7 +10,7 @@ export class BackendStack extends cdk.Stack {
 
     const accounts = new AccountsConstruct(this, 'accounts');
 
-     // Creates the AppSync API
+    // Creates the AppSync API
     const api = new GraphqlApi(this, 'Api', {
       name: 'cqrs-demo-api',
       schema: SchemaFile.fromAsset('graphql/schema.graphql'),
@@ -18,37 +18,40 @@ export class BackendStack extends cdk.Stack {
         defaultAuthorization: {
           authorizationType: AuthorizationType.API_KEY,
           apiKeyConfig: {
-            expires: cdk.Expiration.after(cdk.Duration.days(365))
-          }
+            expires: cdk.Expiration.after(cdk.Duration.days(365)),
+          },
         },
       },
       xrayEnabled: true,
     });
     // Prints out the AppSync GraphQL endpoint to the terminal
-    new cdk.CfnOutput(this, "GraphQLAPIURL", {
-      value: api.graphqlUrl
+    new cdk.CfnOutput(this, 'GraphQLAPIURL', {
+      value: api.graphqlUrl,
     });
 
     // Prints out the AppSync GraphQL API key to the terminal
-    new cdk.CfnOutput(this, "GraphQLAPIKey", {
-      value: api.apiKey || ''
+    new cdk.CfnOutput(this, 'GraphQLAPIKey', {
+      value: api.apiKey || '',
     });
 
     // Prints out the AppSync GraphQL API ID to the terminal
-    new cdk.CfnOutput(this, "GraphQLAPIID", {
-      value: api.apiId || ''
+    new cdk.CfnOutput(this, 'GraphQLAPIID', {
+      value: api.apiId || '',
     });
 
     // Prints out the stack region to the terminal
-    new cdk.CfnOutput(this, "Stack Region", {
-      value: this.region
+    new cdk.CfnOutput(this, 'Stack Region', {
+      value: this.region,
     });
 
-    const accountsMutationsDS = api.addLambdaDataSource('accountsDS', accounts.mutationsResolver);
+    const accountsMutationsDS = api.addLambdaDataSource(
+      'accountsDS',
+      accounts.mutationsResolver
+    );
 
     accountsMutationsDS.createResolver('openAccount', {
       typeName: 'Mutation',
-      fieldName:  'openAccount',
+      fieldName: 'openAccount',
     });
     accountsMutationsDS.createResolver('creditAccount', {
       typeName: 'Mutation',
@@ -59,7 +62,10 @@ export class BackendStack extends cdk.Stack {
       fieldName: 'debitAccount',
     });
 
-    const accountsQueriesDS = api.addLambdaDataSource('AccountsQueriesDS', accounts.queriesResolver);
+    const accountsQueriesDS = api.addLambdaDataSource(
+      'AccountsQueriesDS',
+      accounts.queriesResolver
+    );
 
     accountsQueriesDS.createResolver('getAllAccounts', {
       typeName: 'Query',

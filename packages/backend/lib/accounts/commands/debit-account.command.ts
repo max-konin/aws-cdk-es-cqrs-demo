@@ -6,11 +6,16 @@ export const DebitAccountCommandInput = z.object({
   accountId: z.string(),
   amount: z.number().gt(0),
 });
-export type DebitAccountCommandInputType = z.infer<typeof DebitAccountCommandInput>;
+export type DebitAccountCommandInputType = z.infer<
+  typeof DebitAccountCommandInput
+>;
 
-export class DebitAccountCommand extends Command<'accountId', DebitAccountCommandInputType> {
+export class DebitAccountCommand extends Command<
+  'accountId',
+  DebitAccountCommandInputType
+> {
   commandName = DEBIT_ACCOUNT_COMMAND_TYPE;
   identityBy = 'accountId' as const;
 
-  schema = DebitAccountCommandInput
+  schema = DebitAccountCommandInput;
 }

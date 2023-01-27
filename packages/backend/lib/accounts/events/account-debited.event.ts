@@ -6,7 +6,10 @@ interface AccountDebitedEventData {
   amount: number;
 }
 
-export class AccountDebitedEvent extends Event<'accountId', AccountDebitedEventData> {
+export class AccountDebitedEvent extends Event<
+  'accountId',
+  AccountDebitedEventData
+> {
   eventName = ACCOUNT_DEBITED_EVENT_TYPE;
   identityBy = 'accountId' as const;
 }

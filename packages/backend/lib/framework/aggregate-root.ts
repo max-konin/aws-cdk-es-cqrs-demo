@@ -9,15 +9,18 @@ export interface CommandExecutionResult<I extends string> {
   error?: string;
 }
 
-export interface ExecuteCmdFn<S, I extends string, C extends Command<I>>{
-  (state: S, cmd: C): CommandExecutionResult<I>
+export interface ExecuteCmdFn<S, I extends string, C extends Command<I>> {
+  (state: S, cmd: C): CommandExecutionResult<I>;
 }
 
-export interface ApplyEventFn<S, I extends string, E extends Event<I>>{
-  (state: S, event: E): S
+export interface ApplyEventFn<S, I extends string, E extends Event<I>> {
+  (state: S, event: E): S;
 }
 
-export interface Aggregate<I extends string, S extends Record<I, string | null>> {
+export interface Aggregate<
+  I extends string,
+  S extends Record<I, string | null>
+> {
   initState: () => S;
   identityBy: I;
   executeMap: Record<string, ExecuteCmdFn<S, I, any>>;
@@ -26,15 +29,19 @@ export interface Aggregate<I extends string, S extends Record<I, string | null>>
 
 export interface CommandDispatchingResult<S> {
   ok: boolean;
-  aggregateState?: S,
+  aggregateState?: S;
   error?: string;
 }
 
-
-export class AggregateRoot<I extends string, S extends Record<I, string | null>> {
+export class AggregateRoot<
+  I extends string,
+  S extends Record<I, string | null>
+> {
   private states: S[] = [];
-  constructor(private readonly aggregate: Aggregate<I, S>, private readonly eventStore: EventStore){}
-
+  constructor(
+    private readonly aggregate: Aggregate<I, S>,
+    private readonly eventStore: EventStore
+  ) {}
 
   async dispatchCommand(cmd: Command<I>): Promise<CommandDispatchingResult<S>> {
     const correlationId = v4();
@@ -43,7 +50,8 @@ export class AggregateRoot<I extends string, S extends Record<I, string | null>>
     const state = this.findStateByIdentityField(entityId);
     const executeCommandResult = this.execute(state, cmd);
 
-    if (!executeCommandResult.ok || !executeCommandResult.events) return executeCommandResult;
+    if (!executeCommandResult.ok || !executeCommandResult.events)
+      return executeCommandResult;
 
     if (!state[identityBy]) state[identityBy] = entityId as any;
 
@@ -57,11 +65,14 @@ export class AggregateRoot<I extends string, S extends Record<I, string | null>>
     return {
       ...executeCommandResult,
       aggregateState: newState,
-    }
+    };
   }
 
   findStateByIdentityField(id: string) {
-    return this.states.find((s) => s[this.aggregate.identityBy] === id) ?? this.aggregate.initState();
+    return (
+      this.states.find((s) => s[this.aggregate.identityBy] === id) ??
+      this.aggregate.initState()
+    );
   }
 
   async loadStatesFromEventStore(entityId: string) {
@@ -85,11 +96,10 @@ export class AggregateRoot<I extends string, S extends Record<I, string | null>>
   private updateStates(entityId: string, newState: S) {
     const { identityBy } = this.aggregate;
     this.states = [
-      ...this.states.filter(s => s[identityBy] !== entityId),
+      ...this.states.filter((s) => s[identityBy] !== entityId),
       newState,
-    ]
+    ];
   }
-
 
   private execute(state: S, cmd: Command<I>): CommandExecutionResult<I> {
     console.log(`DISPATCHING COMMAND ${cmd.commandName}`, cmd.data);

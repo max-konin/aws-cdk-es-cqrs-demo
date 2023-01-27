@@ -7,8 +7,11 @@ export const OpenAccountInput = z.object({
 });
 export type OpenAccountInputType = z.infer<typeof OpenAccountInput>;
 
-export class OpenAccountCommand extends Command<'accountId', OpenAccountInputType> {
+export class OpenAccountCommand extends Command<
+  'accountId',
+  OpenAccountInputType
+> {
   commandName = OPEN_ACCOUNT_COMMAND_TYPE;
   identityBy = 'accountId' as const;
-  schema = OpenAccountInput
+  schema = OpenAccountInput;
 }
