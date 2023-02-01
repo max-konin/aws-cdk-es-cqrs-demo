@@ -1,6 +1,9 @@
+/* eslint-disable @typescript-eslint/no-unsafe-call */
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
+/* eslint-disable @typescript-eslint/ban-ts-comment */
 import React, { useEffect, useState } from 'react';
 import { GraphQLResult } from '@aws-amplify/api-graphql';
-import { API } from 'aws-amplify';
+import { API, graphqlOperation } from 'aws-amplify';
 import '@aws-amplify/ui-react/styles.css';
 import {
   Table,
@@ -15,25 +18,37 @@ import {
 import { getAllAccounts } from './graphql/queries';
 import { openAccount, creditAccount, debitAccount } from './graphql/mutations';
 import { v4 } from 'uuid';
-import { GetAllAccountsQuery, Account } from './API';
-
-const delay = (timeout: number) =>
-  new Promise((resolve) => setTimeout(resolve, timeout));
+import { GetAllAccountsQuery, Account, OpenedAccountSubscription } from './API';
+import { openedAccount } from './graphql/subscriptions';
 
 function App() {
   const [accounts, setAccounts] = useState<Account[]>([]);
   const [accountToChangeId, setAccountToChangeId] = useState<string>();
   const [amount, setAmount] = useState(100);
 
+  const subscribeOnAccountOpened = () => {
+    API.graphql(graphqlOperation(openedAccount)).subscribe({
+      next: ({
+        value,
+      }: Record<'value', Record<'data', OpenedAccountSubscription>>) => {
+        const { openedAccount } = value.data;
+        if (!openedAccount) return;
+        setAccounts([...accounts, openedAccount]);
+      },
+    });
+  };
+
   const fetchAccounts = async () => {
-    const res = (await API.graphql({
-      query: getAllAccounts,
-    })) as GraphQLResult<GetAllAccountsQuery>;
+    const res = (await API.graphql(
+      graphqlOperation(getAllAccounts)
+    )) as GraphQLResult<GetAllAccountsQuery>;
+
     setAccounts(res.data?.getAllAccounts || []);
   };
 
   useEffect(() => {
-    fetchAccounts();
+    void fetchAccounts();
+    subscribeOnAccountOpened();
   }, []);
 
   const openNewAccount = async () => {
@@ -45,8 +60,6 @@ function App() {
         },
       },
     });
-    await delay(1000);
-    await fetchAccounts();
   };
 
   const creditAccountAction = async () => {
@@ -56,9 +69,6 @@ function App() {
       query: creditAccount,
       variables: { input: { accountId: accountToChangeId, amount } },
     });
-
-    await delay(1000);
-    await fetchAccounts();
   };
 
   const debitAccountAction = async () => {
@@ -68,9 +78,6 @@ function App() {
       query: debitAccount,
       variables: { input: { accountId: accountToChangeId, amount } },
     });
-
-    await delay(1000);
-    await fetchAccounts();
   };
 
   const accountsList = accounts.map(({ id, balance }) => (

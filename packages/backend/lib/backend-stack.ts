@@ -1,14 +1,44 @@
 import * as cdk from 'aws-cdk-lib';
 import { SchemaFile } from 'aws-cdk-lib/aws-appsync';
-import { GraphqlApi, AuthorizationType } from 'aws-cdk-lib/aws-appsync';
+import {
+  GraphqlApi,
+  AuthorizationType,
+  MappingTemplate,
+} from 'aws-cdk-lib/aws-appsync';
 import { Construct } from 'constructs';
 import { AccountsConstruct } from './accounts/accounts-construct';
+import { aws_dynamodb } from 'aws-cdk-lib';
+import { StreamViewType } from 'aws-cdk-lib/aws-dynamodb';
 
 export class BackendStack extends cdk.Stack {
   constructor(scope: Construct, id: string, props?: cdk.StackProps) {
     super(scope, id, props);
 
-    const accounts = new AccountsConstruct(this, 'accounts');
+    const eventStore = new aws_dynamodb.Table(this, 'EventStore', {
+      partitionKey: {
+        name: 'id',
+        type: aws_dynamodb.AttributeType.STRING,
+      },
+      sortKey: {
+        name: 'timestamp',
+        type: aws_dynamodb.AttributeType.NUMBER,
+      },
+      stream: StreamViewType.NEW_AND_OLD_IMAGES,
+    });
+
+    const accountsTable = new aws_dynamodb.Table(this, 'ReadStoreAccounts', {
+      partitionKey: {
+        name: 'id',
+        type: aws_dynamodb.AttributeType.STRING,
+      },
+    });
+
+    const accounts = new AccountsConstruct(
+      this,
+      'accounts',
+      eventStore,
+      accountsTable
+    );
 
     // Creates the AppSync API
     const api = new GraphqlApi(this, 'Api', {
@@ -24,6 +54,7 @@ export class BackendStack extends cdk.Stack {
       },
       xrayEnabled: true,
     });
+
     // Prints out the AppSync GraphQL endpoint to the terminal
     new cdk.CfnOutput(this, 'GraphQLAPIURL', {
       value: api.graphqlUrl,
@@ -52,6 +83,9 @@ export class BackendStack extends cdk.Stack {
     accountsMutationsDS.createResolver('openAccount', {
       typeName: 'Mutation',
       fieldName: 'openAccount',
+      requestMappingTemplate: MappingTemplate.lambdaRequest(
+        '$util.toJson($context)'
+      ),
     });
     accountsMutationsDS.createResolver('creditAccount', {
       typeName: 'Mutation',
@@ -62,14 +96,16 @@ export class BackendStack extends cdk.Stack {
       fieldName: 'debitAccount',
     });
 
-    const accountsQueriesDS = api.addLambdaDataSource(
-      'AccountsQueriesDS',
-      accounts.queriesResolver
+    const accountsDynamoDataSource = api.addDynamoDbDataSource(
+      'AccountsTableDS',
+      accountsTable
     );
 
-    accountsQueriesDS.createResolver('getAllAccounts', {
+    accountsDynamoDataSource.createResolver('getAllAccounts', {
       typeName: 'Query',
       fieldName: 'getAllAccounts',
+      requestMappingTemplate: MappingTemplate.dynamoDbScanTable(true),
+      responseMappingTemplate: MappingTemplate.dynamoDbResultList(),
     });
   }
 }

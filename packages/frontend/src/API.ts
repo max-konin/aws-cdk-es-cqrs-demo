@@ -59,9 +59,29 @@ export type CreditAccountMutation = {
 };
 
 export type GetAllAccountsQuery = {
-  getAllAccounts:  Array< {
+  getAllAccounts?:  Array< {
     __typename: "Account",
     id: string,
     balance: number,
-  } >,
+  } > | null,
+};
+
+export type OpenedAccountSubscription = {
+  openedAccount?:  {
+    __typename: "Account",
+    id: string,
+    balance: number,
+  } | null,
+};
+
+export type UpdatedAccountSubscriptionVariables = {
+  id: string,
+};
+
+export type UpdatedAccountSubscription = {
+  updatedAccount?:  {
+    __typename: "Account",
+    id: string,
+    balance: number,
+  } | null,
 };

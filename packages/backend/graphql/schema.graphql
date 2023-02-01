@@ -24,5 +24,13 @@ type Mutation {
 }
 
 type Query {
-  getAllAccounts: [Account]!
+  getAllAccounts: [Account!]
+}
+
+type Subscription {
+  openedAccount: Account
+  @aws_subscribe(mutations: ["openAccount"])
+
+  updatedAccount(id: ID!): Account
+  @aws_subscribe(mutations: ["debitAccount", "creditAccount"])
 }
