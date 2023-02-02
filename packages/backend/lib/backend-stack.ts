@@ -15,8 +15,8 @@ export class BackendStack extends cdk.Stack {
   constructor(scope: Construct, id: string, props?: cdk.StackProps) {
     super(scope, id, props);
 
-    const userPool = new cognito.UserPool(this, 'userpool', {
-      userPoolName: 'my-user-pool',
+    const userPool = new cognito.UserPool(this, 'demo-userpool', {
+      userPoolName: 'demo-user-pool',
       selfSignUpEnabled: true,
       signInAliases: {
         email: true,
@@ -24,16 +24,7 @@ export class BackendStack extends cdk.Stack {
       autoVerify: {
         email: true,
       },
-      standardAttributes: {
-        givenName: {
-          required: true,
-          mutable: true,
-        },
-        familyName: {
-          required: true,
-          mutable: true,
-        },
-      },
+      standardAttributes: {},
       customAttributes: {
         tenantId: new cognito.StringAttribute({ mutable: false }),
       },
@@ -87,7 +78,7 @@ export class BackendStack extends cdk.Stack {
     const userPoolClient = new cognito.UserPoolClient(this, 'userpool-client', {
       userPool,
       authFlows: {
-        adminUserPassword: true,
+        userPassword: true,
         custom: true,
         userSrp: true,
       },
@@ -130,9 +121,9 @@ export class BackendStack extends cdk.Stack {
       schema: SchemaFile.fromAsset('graphql/schema.graphql'),
       authorizationConfig: {
         defaultAuthorization: {
-          authorizationType: AuthorizationType.API_KEY,
-          apiKeyConfig: {
-            expires: cdk.Expiration.after(cdk.Duration.days(365)),
+          authorizationType: AuthorizationType.USER_POOL,
+          userPoolConfig: {
+            userPool: userPool,
           },
         },
       },

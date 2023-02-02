@@ -10,7 +10,7 @@ import Params from '../../backend/cdk-outputs.json';
 Amplify.configure({
   aws_appsync_region: Params.BackendStack.StackRegion,
   aws_appsync_graphqlEndpoint: Params.BackendStack.GraphQLAPIURL,
-  aws_appsync_authenticationType: 'API_KEY', //Primary AWS AppSync authentication type
+  aws_appsync_authenticationType: 'AMAZON_COGNITO_USER_POOLS',
   aws_appsync_apiKey: Params.BackendStack.GraphQLAPIKey,
   Auth: {
     userPoolId: Params.BackendStack.UserPullId,

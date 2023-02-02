@@ -20,6 +20,7 @@ import { openAccount, creditAccount, debitAccount } from './graphql/mutations';
 import { v4 } from 'uuid';
 import { GetAllAccountsQuery, Account, OpenedAccountSubscription } from './API';
 import { openedAccount } from './graphql/subscriptions';
+import { Authenticator } from '@aws-amplify/ui-react';
 
 function App() {
   const [accounts, setAccounts] = useState<Account[]>([]);
@@ -95,38 +96,47 @@ function App() {
 
   return (
     <div className="App">
-      <Table caption="" highlightOnHover={false}>
-        <TableHead>
-          <TableRow>
-            <TableCell as="th">ID</TableCell>
-            <TableCell as="th">Balance</TableCell>
-          </TableRow>
-        </TableHead>
-        <TableBody>{accountsList}</TableBody>
-      </Table>
-      <hr />
+      <Authenticator>
+        {({ signOut, user }) => (
+          <main>
+            <h1>Hello {user.username}</h1>
+            <button onClick={signOut}>Sign out</button>
+            <hr />
+            <Table caption="" highlightOnHover={false}>
+              <TableHead>
+                <TableRow>
+                  <TableCell as="th">ID</TableCell>
+                  <TableCell as="th">Balance</TableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>{accountsList}</TableBody>
+            </Table>
+            <hr />
 
-      <Button onClick={() => openNewAccount()}>Open New Account</Button>
+            <Button onClick={() => openNewAccount()}>Open New Account</Button>
 
-      <hr />
+            <hr />
 
-      <SelectField
-        label="AccountId"
-        value={accountToChangeId}
-        onChange={(e) => setAccountToChangeId(e.target.value)}
-      >
-        {accountIdOptions}
-      </SelectField>
+            <SelectField
+              label="AccountId"
+              value={accountToChangeId}
+              onChange={(e) => setAccountToChangeId(e.target.value)}
+            >
+              {accountIdOptions}
+            </SelectField>
 
-      <SliderField
-        label="Amount"
-        value={amount}
-        onChange={setAmount}
-        max={1000}
-      />
+            <SliderField
+              label="Amount"
+              value={amount}
+              onChange={setAmount}
+              max={1000}
+            />
 
-      <Button onClick={() => debitAccountAction()}>Debit</Button>
-      <Button onClick={() => creditAccountAction()}>Credit</Button>
+            <Button onClick={() => debitAccountAction()}>Debit</Button>
+            <Button onClick={() => creditAccountAction()}>Credit</Button>
+          </main>
+        )}
+      </Authenticator>
     </div>
   );
 }
