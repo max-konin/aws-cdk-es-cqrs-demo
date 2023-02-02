@@ -1,11 +1,10 @@
-/* eslint-disable @typescript-eslint/no-unsafe-member-access */
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import React from 'react';
 import ReactDOM from 'react-dom/client';
-import { Amplify } from 'aws-amplify';
+import {Amplify} from 'aws-amplify';
 import App from './App';
 import './index.css';
 import Params from '../../backend/cdk-outputs.json';
+import {BrowserRouter,} from "react-router-dom";
 
 Amplify.configure({
   aws_appsync_region: Params.BackendStack.StackRegion,
@@ -15,5 +14,7 @@ Amplify.configure({
 });
 
 ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
-  <App />
+    <BrowserRouter>
+      <App />
+    </BrowserRouter>
 );
