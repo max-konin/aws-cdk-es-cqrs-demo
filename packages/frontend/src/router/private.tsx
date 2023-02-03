@@ -1,14 +1,14 @@
-import Dashboard from "../pages/Dashboard";
-import React from "react";
-import Shipments from "../pages/Shipments";
+import Dashboard from '../pages/Dashboard';
+import React from 'react';
+import Shipments from '../pages/Shipments';
 
 export const privateRoutes = [
   {
-    path: "/",
+    path: '/',
     element: <Dashboard />,
   },
   {
-    path: "/shipments",
+    path: '/shipments',
     element: <Shipments />,
   },
 ];

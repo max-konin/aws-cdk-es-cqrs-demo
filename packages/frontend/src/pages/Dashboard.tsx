@@ -1,9 +1,9 @@
 /* eslint-disable @typescript-eslint/no-unsafe-call */
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/ban-ts-comment */
-import React, {useEffect, useState} from 'react';
-import {GraphQLResult} from '@aws-amplify/api-graphql';
-import {API, graphqlOperation} from 'aws-amplify';
+import React, { useEffect, useState } from 'react';
+import { GraphQLResult } from '@aws-amplify/api-graphql';
+import { API, graphqlOperation } from 'aws-amplify';
 import '@aws-amplify/ui-react/styles.css';
 import {
   Button,
@@ -15,11 +15,15 @@ import {
   TableHead,
   TableRow,
 } from '@aws-amplify/ui-react';
-import {getAllAccounts} from '../graphql/queries';
-import {creditAccount, debitAccount, openAccount} from '../graphql/mutations';
-import {v4} from 'uuid';
-import {Account, GetAllAccountsQuery, OpenedAccountSubscription} from '../API';
-import {openedAccount} from '../graphql/subscriptions';
+import { getAllAccounts } from '../graphql/queries';
+import { creditAccount, debitAccount, openAccount } from '../graphql/mutations';
+import { v4 } from 'uuid';
+import {
+  Account,
+  GetAllAccountsQuery,
+  OpenedAccountSubscription,
+} from '../API';
+import { openedAccount } from '../graphql/subscriptions';
 
 function Dashboard() {
   const [accounts, setAccounts] = useState<Account[]>([]);
@@ -29,8 +33,8 @@ function Dashboard() {
   const subscribeOnAccountOpened = () => {
     API.graphql(graphqlOperation(openedAccount)).subscribe({
       next: ({
-               value,
-             }: Record<'value', Record<'data', OpenedAccountSubscription>>) => {
+        value,
+      }: Record<'value', Record<'data', OpenedAccountSubscription>>) => {
         const { openedAccount } = value.data;
         if (!openedAccount) return;
         setAccounts([...accounts, openedAccount]);
@@ -40,7 +44,7 @@ function Dashboard() {
 
   const fetchAccounts = async () => {
     const res = (await API.graphql(
-        graphqlOperation(getAllAccounts)
+      graphqlOperation(getAllAccounts)
     )) as GraphQLResult<GetAllAccountsQuery>;
 
     setAccounts(res.data?.getAllAccounts || []);
@@ -81,53 +85,53 @@ function Dashboard() {
   };
 
   const accountsList = accounts.map(({ id, balance }) => (
-      <TableRow key={id}>
-        <TableCell>{id}</TableCell>
-        <TableCell>{balance}</TableCell>
-      </TableRow>
+    <TableRow key={id}>
+      <TableCell>{id}</TableCell>
+      <TableCell>{balance}</TableCell>
+    </TableRow>
   ));
 
   const accountIdOptions = accounts.map(({ id }) => (
-      <option key={id} value={id}>
-        {id}
-      </option>
+    <option key={id} value={id}>
+      {id}
+    </option>
   ));
 
   return (
-      <div>
-        <Table caption="" highlightOnHover={false}>
-          <TableHead>
-            <TableRow>
-              <TableCell as="th">ID</TableCell>
-              <TableCell as="th">Balance</TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>{accountsList}</TableBody>
-        </Table>
-        <hr />
+    <div>
+      <Table caption="" highlightOnHover={false}>
+        <TableHead>
+          <TableRow>
+            <TableCell as="th">ID</TableCell>
+            <TableCell as="th">Balance</TableCell>
+          </TableRow>
+        </TableHead>
+        <TableBody>{accountsList}</TableBody>
+      </Table>
+      <hr />
 
-        <Button onClick={() => openNewAccount()}>Open New Account</Button>
+      <Button onClick={() => openNewAccount()}>Open New Account</Button>
 
-        <hr />
+      <hr />
 
-        <SelectField
-            label="AccountId"
-            value={accountToChangeId}
-            onChange={(e) => setAccountToChangeId(e.target.value)}
-        >
-          {accountIdOptions}
-        </SelectField>
+      <SelectField
+        label="AccountId"
+        value={accountToChangeId}
+        onChange={(e) => setAccountToChangeId(e.target.value)}
+      >
+        {accountIdOptions}
+      </SelectField>
 
-        <SliderField
-            label="Amount"
-            value={amount}
-            onChange={setAmount}
-            max={1000}
-        />
+      <SliderField
+        label="Amount"
+        value={amount}
+        onChange={setAmount}
+        max={1000}
+      />
 
-        <Button onClick={() => debitAccountAction()}>Debit</Button>
-        <Button onClick={() => creditAccountAction()}>Credit</Button>
-      </div>
+      <Button onClick={() => debitAccountAction()}>Debit</Button>
+      <Button onClick={() => creditAccountAction()}>Credit</Button>
+    </div>
   );
 }
 
