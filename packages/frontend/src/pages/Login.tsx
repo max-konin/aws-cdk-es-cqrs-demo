@@ -14,7 +14,7 @@ import Container from '@mui/material/Container';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { useContext } from 'react';
 import { AuthContext } from '../context/AuthContext';
-import { Auth } from "aws-amplify";
+import { Auth } from 'aws-amplify';
 
 const theme = createTheme();
 
@@ -32,7 +32,6 @@ function Login() {
       console.log('user: ', user);
       setIsAuth(true);
       localStorage.setItem('auth', 'true');
-
     } catch (error) {
       console.log('error signing in', error);
     }
@@ -60,7 +59,7 @@ function Login() {
             component="form"
             onSubmit={handleSubmit}
             noValidate
-            sx={{ mt: 1 }}
+            sx={{ mt: 1, width: 1 }}
           >
             <TextField
               margin="normal"
