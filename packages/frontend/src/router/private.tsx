@@ -1,5 +1,4 @@
 import Dashboard from '../pages/Dashboard';
-import React from 'react';
 import Shipments from '../pages/Shipments';
 
 export const privateRoutes = [

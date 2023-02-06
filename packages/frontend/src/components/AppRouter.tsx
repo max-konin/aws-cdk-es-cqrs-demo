@@ -1,20 +1,15 @@
-import React, { useContext, useEffect } from "react";
+import { useContext } from 'react';
 import { Navigate, Route, Routes } from 'react-router-dom';
 import { publicRoutes, privateRoutes } from '../router';
 import { AuthContext } from '../context/AuthContext';
-import { Auth } from 'aws-amplify';
+import { Loader } from '@aws-amplify/ui-react';
 
 const AppRouter = () => {
-  const { isAuth } = useContext(AuthContext);
+  const { isAuth, isLoading } = useContext(AuthContext);
 
-  useEffect(() => {
-    const fetchData = async () => {
-      const qwe3 = await Auth.currentUserInfo();
-      console.log('qwe3: ', qwe3);
-    };
-
-    fetchData().catch(console.error);
-  }, []);
+  if (isLoading) {
+    return <Loader />;
+  }
 
   const routes = isAuth ? privateRoutes : publicRoutes;
   const redirectTo = isAuth ? '/' : '/login';
