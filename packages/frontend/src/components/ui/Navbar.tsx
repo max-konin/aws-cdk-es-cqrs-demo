@@ -2,6 +2,7 @@ import { useContext } from 'react';
 import { Link } from 'react-router-dom';
 import { AuthContext } from '../../context/AuthContext';
 import { Auth } from 'aws-amplify';
+import cls from './Navbar.module.css';
 
 const Navbar = () => {
   const { isAuth, setIsAuth } = useContext(AuthContext);
@@ -22,18 +23,19 @@ const Navbar = () => {
     } catch (error) {
       console.log('Error deleting user', error);
     }
-  }
+  };
 
   if (!isAuth) return <div></div>;
 
   return (
-    <div className="navbar">
-      <div className="navbar__links">
+    <div className={cls.Navbar}>
+      TRADELANES
+      <div className={cls.links}>
         <Link to="/">Main</Link>
         <Link to="/shipments">Shipments</Link>
-        <button onClick={logout}>Logout</button>
-        <button onClick={deleteUser}>Delete User</button>
       </div>
+      <button onClick={logout}>Logout</button>
+      <button onClick={deleteUser}>Delete User</button>
     </div>
   );
 };

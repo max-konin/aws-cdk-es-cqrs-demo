@@ -1,6 +1,6 @@
 import * as React from 'react';
+import { useContext } from 'react';
 import Avatar from '@mui/material/Avatar';
-import Button from '@mui/material/Button';
 import CssBaseline from '@mui/material/CssBaseline';
 import TextField from '@mui/material/TextField';
 import FormControlLabel from '@mui/material/FormControlLabel';
@@ -12,23 +12,43 @@ import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
-import { useContext } from 'react';
 import { AuthContext } from '../context/AuthContext';
 import { Auth } from 'aws-amplify';
+import { object, string, TypeOf } from 'zod';
+import { Controller, SubmitHandler, useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { LoadingButton } from '@mui/lab';
 
 const theme = createTheme();
+
+const registerSchema = object({
+  email: string().email('Email is invalid'),
+  password: string()
+    .min(6, 'Password must be more than 6 characters')
+    .max(32, 'Password must be less than 32 characters'),
+});
+
+type RegisterInput = TypeOf<typeof registerSchema>;
 
 function Login() {
   const { setIsAuth } = useContext(AuthContext);
 
-  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    const data = new FormData(event.currentTarget);
-    const email = data.get('email') as string;
-    const password = data.get('password') as string;
+  const {
+    handleSubmit,
+    control,
+    formState: { errors, isSubmitting },
+  } = useForm({
+    resolver: zodResolver(registerSchema),
+    defaultValues: {
+      email: '',
+      password: '',
+    },
+  });
 
+  const onSubmit: SubmitHandler<RegisterInput> = async (data) => {
     try {
-      const user = await Auth.signIn(email, password);
+      const user = await Auth.signIn(data.email, data.password);
+      console.log(user);
       setIsAuth(true);
     } catch (error) {
       console.log('error signing in', error);
@@ -55,42 +75,65 @@ function Login() {
           </Typography>
           <Box
             component="form"
-            onSubmit={handleSubmit}
+            onSubmit={(...args) => void handleSubmit(onSubmit)(...args)}
             noValidate
             sx={{ mt: 1, width: 1 }}
           >
-            <TextField
-              margin="normal"
-              required
-              fullWidth
-              id="email"
-              label="Email Address"
-              name="email"
-              autoComplete="email"
-              autoFocus
+            <Controller
+              name={'email'}
+              control={control}
+              render={({ field: { onChange, value } }) => (
+                <TextField
+                  margin="normal"
+                  required
+                  fullWidth
+                  id="email"
+                  label="Email Address"
+                  name="email"
+                  autoComplete="email"
+                  autoFocus
+                  onChange={onChange}
+                  value={value}
+                  error={!!errors['email']}
+                  helperText={errors['email'] ? errors['email'].message : ''}
+                />
+              )}
             />
-            <TextField
-              margin="normal"
-              required
-              fullWidth
-              name="password"
-              label="Password"
-              type="password"
-              id="password"
-              autoComplete="current-password"
+            <Controller
+              name={'password'}
+              control={control}
+              render={({ field: { onChange, value } }) => (
+                <TextField
+                  margin="normal"
+                  required
+                  fullWidth
+                  name="password"
+                  label="Password"
+                  type="password"
+                  id="password"
+                  autoComplete="current-password"
+                  onChange={onChange}
+                  value={value}
+                  error={!!errors['password']}
+                  helperText={
+                    errors['password'] ? errors['password'].message : ''
+                  }
+                />
+              )}
             />
             <FormControlLabel
               control={<Checkbox value="remember" color="primary" />}
               label="Remember me"
             />
-            <Button
+            <LoadingButton
               type="submit"
               fullWidth
               variant="contained"
               sx={{ mt: 3, mb: 2 }}
+              loading={isSubmitting}
             >
               Sign In
-            </Button>
+            </LoadingButton>
             <Grid container>
               <Grid item xs>
                 <Link href="#" variant="body2">
