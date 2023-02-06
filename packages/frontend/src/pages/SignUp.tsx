@@ -1,5 +1,4 @@
 import * as React from 'react';
-import { useEffect, useState } from 'react';
 import Avatar from '@mui/material/Avatar';
 import TextField from '@mui/material/TextField';
 import { LoadingButton } from '@mui/lab';
@@ -14,7 +13,10 @@ import { Controller, SubmitHandler, useForm } from 'react-hook-form';
 import { object, string, TypeOf } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import SignUpHeader from '../components/auth/SignUpHeader';
-import Container from '@mui/material/Container';
+import {
+  CognitoAuthCode,
+  ICognitoAuthError,
+} from '../components/auth/Cognito-errors';
 
 // .refine((data) => data.password === data.passwordConfirm, {
 //   path: ['passwordConfirm'],
@@ -50,13 +52,14 @@ export default function SignUp() {
       await Auth.signUp({
         username: data.email,
         password: data.password,
+        autoSignIn: { enabled: true },
       });
-      navigate('/verify-email');
+      navigate('/verify-email', { state: { username: data.email } });
     } catch (error) {
-      // eslint-disable-next-line no-console
-      console.log('1:', error?.message as string);
-      // TODO parse aws error
-      return false;
+      const cognitoError = error as ICognitoAuthError;
+      if (cognitoError.code === CognitoAuthCode.UsernameExistsException) {
+        navigate('/login');
+      }
     }
   };
   return (
