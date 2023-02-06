@@ -16,6 +16,7 @@ import { Auth, Hub } from 'aws-amplify';
 import Link from '@mui/material/Link';
 import { ICognitoAuthError } from '../components/auth/Cognito-errors';
 import { AuthContext } from '../context/AuthContext';
+import { useSnackbar } from 'notistack';
 
 const registerSchema = object({
   activationCode: string().min(1, 'Please Enter Activation Code'),
@@ -28,6 +29,7 @@ interface LocationState {
 
 export default function VerifyEmail() {
   const { setIsAuth } = useContext(AuthContext);
+  const { enqueueSnackbar } = useSnackbar();
 
   const navigate = useNavigate();
   const location = useLocation();
@@ -72,10 +74,12 @@ export default function VerifyEmail() {
       });
     }
   };
-
   const resendActivationCode = async () => {
     try {
-      await Auth.resendSignUp('mukin.v.i@gmail.com');
+      await Auth.resendSignUp(username);
+      enqueueSnackbar(`Activation code successfully sent to ${username}`, {
+        variant: 'success',
+      });
     } catch (error) {
       const cognitoError = error as ICognitoAuthError;
       setError('activationCode', {

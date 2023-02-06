@@ -4,6 +4,8 @@ import App from './App';
 import './index.css';
 import Params from '../../backend/cdk-outputs.json';
 import { BrowserRouter } from 'react-router-dom';
+import { SnackbarProvider } from 'notistack';
+import { createTheme, ThemeProvider } from '@mui/material/styles';
 
 Amplify.configure({
   aws_appsync_region: Params.BackendStack.StackRegion,
@@ -17,10 +19,15 @@ Amplify.configure({
   },
 });
 
+const theme = createTheme();
 Auth.configure();
 
 ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
-  <BrowserRouter>
-    <App />
-  </BrowserRouter>
+  <ThemeProvider theme={theme}>
+    <SnackbarProvider maxSnack={3}>
+      <BrowserRouter>
+        <App />
+      </BrowserRouter>
+    </SnackbarProvider>
+  </ThemeProvider>
 );

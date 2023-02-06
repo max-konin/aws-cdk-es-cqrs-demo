@@ -18,6 +18,11 @@ import { object, string, TypeOf } from 'zod';
 import { Controller, SubmitHandler, useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { LoadingButton } from '@mui/lab';
+import { useNavigate } from 'react-router-dom';
+import {
+  CognitoAuthCode,
+  ICognitoAuthError,
+} from '../components/auth/Cognito-errors';
 
 const theme = createTheme();
 
@@ -31,6 +36,7 @@ const registerSchema = object({
 type RegisterInput = TypeOf<typeof registerSchema>;
 
 function Login() {
+  const navigate = useNavigate();
   const { setIsAuth } = useContext(AuthContext);
 
   const {
@@ -51,6 +57,10 @@ function Login() {
       console.log(user);
       setIsAuth(true);
     } catch (error) {
+      const cognitoError = error as ICognitoAuthError;
+      if (cognitoError.code === CognitoAuthCode.UserNotConfirmedException) {
+        navigate('/verify-email', { state: { username: data.email } });
+      }
       console.log('error signing in', error);
     }
   };
