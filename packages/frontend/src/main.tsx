@@ -1,4 +1,3 @@
-import React from 'react';
 import ReactDOM from 'react-dom/client';
 import { Amplify, Auth } from 'aws-amplify';
 import App from './App';

@@ -29,9 +29,7 @@ function Login() {
 
     try {
       const user = await Auth.signIn(email, password);
-      console.log('user: ', user);
       setIsAuth(true);
-      localStorage.setItem('auth', 'true');
     } catch (error) {
       console.log('error signing in', error);
     }

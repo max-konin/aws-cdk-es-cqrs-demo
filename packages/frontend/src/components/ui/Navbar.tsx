@@ -1,7 +1,7 @@
-import React, { useContext } from 'react';
+import { useContext } from 'react';
 import { Link } from 'react-router-dom';
-import { AuthContext } from '../context/AuthContext';
-import { Auth } from "aws-amplify";
+import { AuthContext } from '../../context/AuthContext';
+import { Auth } from 'aws-amplify';
 
 const Navbar = () => {
   const { isAuth, setIsAuth } = useContext(AuthContext);

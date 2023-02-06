@@ -1,5 +1,4 @@
 import Login from '../pages/Login';
-import React from 'react';
 import SignUp from '../pages/SignUp';
 import VerifyEmail from '../pages/VerifyEmail';
 

@@ -1,25 +1,27 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import '@aws-amplify/ui-react/styles.css';
 import AppRouter from './components/AppRouter';
 import { AuthContext } from './context/AuthContext';
-import Navbar from './components/Navbar';
 import { Auth } from 'aws-amplify';
 import CssBaseline from '@mui/material/CssBaseline';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
+import Navbar from './components/ui/Navbar';
 
 const theme = createTheme();
 function App() {
   const [isAuth, setIsAuth] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+
+  const checkLogin = async () => {
+    const user = await Auth.currentUserInfo();
+    if (user) {
+      setIsAuth(true);
+    }
+    setIsLoading(false);
+  };
 
   useEffect(() => {
-    const fetchData = async () => {
-      const user = await Auth.currentUserInfo();
-      console.log('user: ', user);
-      if (user) {
-        setIsAuth(true);
-      }
-    };
-    fetchData().catch(console.error);
+    checkLogin().catch(console.error);
   }, []);
 
   return (
@@ -30,6 +32,7 @@ function App() {
           value={{
             isAuth,
             setIsAuth,
+            isLoading,
           }}
         >
           <Navbar />
