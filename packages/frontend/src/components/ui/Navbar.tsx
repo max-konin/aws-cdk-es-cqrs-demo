@@ -15,6 +15,15 @@ const Navbar = () => {
     }
   };
 
+  const deleteUser = async () => {
+    try {
+      const result = await Auth.deleteUser();
+      console.log(result);
+    } catch (error) {
+      console.log('Error deleting user', error);
+    }
+  }
+
   if (!isAuth) return <div></div>;
 
   return (
@@ -23,6 +32,7 @@ const Navbar = () => {
         <Link to="/">Main</Link>
         <Link to="/shipments">Shipments</Link>
         <button onClick={logout}>Logout</button>
+        <button onClick={deleteUser}>Delete User</button>
       </div>
     </div>
   );
