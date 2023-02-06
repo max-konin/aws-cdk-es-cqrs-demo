@@ -32,12 +32,12 @@ export default function VerifyEmail() {
   const navigate = useNavigate();
   const location = useLocation();
   const state = location.state as LocationState;
-  const [username, setUsername] = useState(state?.username);
+  const [username] = useState(state?.username);
   useEffect(() => {
     if (!state?.username) {
       navigate('/login');
     }
-    Hub.listen('auth', ({ payload }) => {
+    const hubAuthListener = Hub.listen('auth', ({ payload }) => {
       const { event } = payload;
       if (event === 'autoSignIn') {
         setIsAuth(true);
@@ -46,6 +46,7 @@ export default function VerifyEmail() {
         navigate('/login');
       }
     });
+    return () => hubAuthListener;
   }, []);
 
   const {
