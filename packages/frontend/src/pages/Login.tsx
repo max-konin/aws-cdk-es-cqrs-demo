@@ -3,8 +3,6 @@ import { useContext } from 'react';
 import Avatar from '@mui/material/Avatar';
 import CssBaseline from '@mui/material/CssBaseline';
 import TextField from '@mui/material/TextField';
-import FormControlLabel from '@mui/material/FormControlLabel';
-import Checkbox from '@mui/material/Checkbox';
 import Link from '@mui/material/Link';
 import Grid from '@mui/material/Grid';
 import Box from '@mui/material/Box';
@@ -23,6 +21,8 @@ import {
   CognitoAuthCode,
   ICognitoAuthError,
 } from '../components/auth/Cognito-errors';
+import OutlinePasswordInput from '../components/ui/form/OutlinePasswordInput';
+import { useSnackbar } from 'notistack';
 
 const theme = createTheme();
 
@@ -38,6 +38,7 @@ type RegisterInput = TypeOf<typeof registerSchema>;
 function Login() {
   const navigate = useNavigate();
   const { setIsAuth } = useContext(AuthContext);
+  const { enqueueSnackbar } = useSnackbar();
 
   const {
     handleSubmit,
@@ -53,15 +54,17 @@ function Login() {
 
   const onSubmit: SubmitHandler<RegisterInput> = async (data) => {
     try {
-      const user = await Auth.signIn(data.email, data.password);
-      console.log(user);
+      await Auth.signIn(data.email, data.password);
       setIsAuth(true);
     } catch (error) {
       const cognitoError = error as ICognitoAuthError;
       if (cognitoError.code === CognitoAuthCode.UserNotConfirmedException) {
         navigate('/verify-email', { state: { username: data.email } });
+      } else {
+        enqueueSnackbar(cognitoError.message, {
+          variant: 'error',
+        });
       }
-      console.log('error signing in', error);
     }
   };
 
@@ -109,31 +112,12 @@ function Login() {
                 />
               )}
             />
-            <Controller
-              name={'password'}
+            <OutlinePasswordInput
+              name="password"
               control={control}
-              render={({ field: { onChange, value } }) => (
-                <TextField
-                  margin="normal"
-                  required
-                  fullWidth
-                  name="password"
-                  label="Password"
-                  type="password"
-                  id="password"
-                  autoComplete="current-password"
-                  onChange={onChange}
-                  value={value}
-                  error={!!errors['password']}
-                  helperText={
-                    errors['password'] ? errors['password'].message : ''
-                  }
-                />
-              )}
-            />
-            <FormControlLabel
-              control={<Checkbox value="remember" color="primary" />}
-              label="Remember me"
+              error={errors['password']}
+              label="Password"
+              required={true}
             />
             <LoadingButton
               type="submit"

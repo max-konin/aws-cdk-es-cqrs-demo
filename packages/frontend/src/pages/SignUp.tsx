@@ -3,7 +3,6 @@ import Avatar from '@mui/material/Avatar';
 import TextField from '@mui/material/TextField';
 import { LoadingButton } from '@mui/lab';
 import Link from '@mui/material/Link';
-import Grid from '@mui/material/Grid';
 import Box from '@mui/material/Box';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Typography from '@mui/material/Typography';
@@ -17,6 +16,8 @@ import {
   CognitoAuthCode,
   ICognitoAuthError,
 } from '../components/auth/Cognito-errors';
+import { Container } from '@mui/material';
+import OutlinePasswordInput from '../components/ui/form/OutlinePasswordInput';
 
 // .refine((data) => data.password === data.passwordConfirm, {
 //   path: ['passwordConfirm'],
@@ -84,67 +85,51 @@ export default function SignUp() {
           <Link href="#">TradeLanes Privacy Policy</Link>&nbsp;and&nbsp;
           <Link href="#">Terms of Service</Link>
         </Typography>
-        <Box
-          component="form"
-          noValidate
-          onSubmit={(...args) => void handleSubmit(onSubmit)(...args)}
-          sx={{ mt: 3 }}
-        >
-          <Grid container spacing={2}>
-            <Grid item xs={12}>
-              <Controller
-                name={'email'}
-                control={control}
-                render={({ field: { onChange, value } }) => (
-                  <TextField
-                    required
-                    fullWidth
-                    id="email"
-                    label="Email Address"
-                    name="email"
-                    autoComplete="email"
-                    onChange={onChange}
-                    value={value}
-                    error={!!errors['email']}
-                    helperText={errors['email'] ? errors['email'].message : ''}
-                  />
-                )}
-              />
-            </Grid>
-            <Grid item xs={12}>
-              <Controller
-                name={'password'}
-                control={control}
-                render={({ field: { onChange, value } }) => (
-                  <TextField
-                    required
-                    fullWidth
-                    name="password"
-                    label="Password"
-                    type="password"
-                    id="password"
-                    autoComplete="new-password"
-                    onChange={onChange}
-                    value={value}
-                    error={!!errors['password']}
-                    helperText={
-                      errors['password'] ? errors['password'].message : ''
-                    }
-                  />
-                )}
-              />
-            </Grid>
-          </Grid>
-          <LoadingButton
-            type="submit"
-            fullWidth
-            variant="contained"
-            sx={{ mt: 3, mb: 2 }}
-            loading={isSubmitting}
+        <Container component="div" maxWidth="xs">
+          <Box
+            component="form"
+            noValidate
+            onSubmit={(...args) => void handleSubmit(onSubmit)(...args)}
+            maxWidth="xs"
+            sx={{ mt: 2 }}
           >
-            Sign Up
-          </LoadingButton>
-        </Box>
+            <Controller
+              name={'email'}
+              control={control}
+              render={({ field: { onChange, value } }) => (
+                <TextField
+                  margin="normal"
+                  required
+                  fullWidth
+                  id="email"
+                  label="Email Address"
+                  name="email"
+                  autoComplete="email"
+                  onChange={onChange}
+                  value={value}
+                  error={!!errors['email']}
+                  helperText={errors['email'] ? errors['email'].message : ''}
+                />
+              )}
+            />
+            <OutlinePasswordInput
+              name="password"
+              control={control}
+              error={errors['password']}
+              label="Password"
+              required={true}
+            />
+            <LoadingButton
+              type="submit"
+              fullWidth
+              variant="contained"
+              sx={{ mt: 3, mb: 2 }}
+              loading={isSubmitting}
+            >
+              Sign Up
+            </LoadingButton>
+          </Box>
+        </Container>
       </Box>
     </>
   );
