@@ -48,7 +48,7 @@ export default function VerifyEmail() {
         navigate('/login');
       }
     });
-    return () => hubAuthListener;
+    return hubAuthListener;
   }, []);
 
   const {

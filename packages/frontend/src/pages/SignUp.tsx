@@ -19,17 +19,15 @@ import {
 import { Container } from '@mui/material';
 import OutlinePasswordInput from '../components/ui/form/OutlinePasswordInput';
 
-// .refine((data) => data.password === data.passwordConfirm, {
-//   path: ['passwordConfirm'],
-//   message: 'Passwords do not match',
-// });
-
 const registerSchema = object({
   email: string().email('Email is invalid'),
   password: string()
     .min(6, 'Password must be more than 6 characters')
     .max(32, 'Password must be less than 32 characters'),
-  // passwordConfirm: string().nonempty('Please confirm your password'),
+  passwordConfirm: string().min(6, 'Password must be more than 6 characters'),
+}).refine((data) => data.password === data.passwordConfirm, {
+  path: ['passwordConfirm'],
+  message: 'Passwords do not match',
 });
 
 type RegisterInput = TypeOf<typeof registerSchema>;
@@ -45,6 +43,7 @@ export default function SignUp() {
     defaultValues: {
       email: '',
       password: '',
+      passwordConfirm: '',
     },
   });
 
@@ -117,6 +116,13 @@ export default function SignUp() {
               control={control}
               error={errors['password']}
               label="Password"
+              required={true}
+            />
+            <OutlinePasswordInput
+              name="passwordConfirm"
+              control={control}
+              error={errors['passwordConfirm']}
+              label="Password Confirm"
               required={true}
             />
             <LoadingButton
