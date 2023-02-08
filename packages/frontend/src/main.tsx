@@ -1,4 +1,4 @@
-import ReactDOM from 'react-dom/client';
+import { createRoot } from 'react-dom/client';
 import { Amplify, Auth } from 'aws-amplify';
 import App from './App';
 import './index.css';
@@ -7,6 +7,7 @@ import { BrowserRouter } from 'react-router-dom';
 import { SnackbarProvider } from 'notistack';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
 Amplify.configure({
   aws_appsync_region: Params.BackendStack.StackRegion,
   aws_appsync_graphqlEndpoint: Params.BackendStack.GraphQLAPIURL,
@@ -18,11 +19,12 @@ Amplify.configure({
     userPoolWebClientId: Params.BackendStack.UserPoolClientId,
   },
 });
+/* eslint-enable @typescript-eslint/no-unsafe-member-access */
 
 const theme = createTheme();
 Auth.configure();
 
-ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
+createRoot(document.getElementById('root') as HTMLElement).render(
   <ThemeProvider theme={theme}>
     <SnackbarProvider maxSnack={3}>
       <BrowserRouter>

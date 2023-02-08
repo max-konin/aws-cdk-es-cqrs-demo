@@ -19,7 +19,8 @@ function App() {
   };
 
   useEffect(() => {
-    checkLogin().catch(console.error);
+    // eslint-disable-next-line no-console
+    checkLogin().catch(console.log);
   }, []);
 
   return (
