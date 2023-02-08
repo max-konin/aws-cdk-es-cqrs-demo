@@ -1,16 +1,17 @@
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import '@aws-amplify/ui-react/styles.css';
 import AppRouter from './components/AppRouter';
-import { AuthContext } from './context/AuthContext';
 import { Auth } from 'aws-amplify';
 import CssBaseline from '@mui/material/CssBaseline';
 import Navbar from './components/ui/Navbar';
+import { useUserStore } from './store/user';
 
 function App() {
-  const [isAuth, setIsAuth] = useState(false);
-  const [isLoading, setIsLoading] = useState(true);
+  const setIsAuth = useUserStore((state) => state.setIsAuth);
+  const setIsLoading = useUserStore((state) => state.setIsLoading);
 
   const checkLogin = async () => {
+    setIsLoading(true);
     const user = await Auth.currentUserInfo();
     if (user) {
       setIsAuth(true);
@@ -26,16 +27,8 @@ function App() {
   return (
     <div className="app">
       <CssBaseline />
-      <AuthContext.Provider
-        value={{
-          isAuth,
-          setIsAuth,
-          isLoading,
-        }}
-      >
-        <Navbar />
-        <AppRouter />
-      </AuthContext.Provider>
+      <Navbar />
+      <AppRouter />
     </div>
   );
 }

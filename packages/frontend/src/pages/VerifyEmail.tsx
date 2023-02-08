@@ -1,5 +1,4 @@
-import * as React from 'react';
-import { useContext, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import Avatar from '@mui/material/Avatar';
 import TextField from '@mui/material/TextField';
 import { LoadingButton } from '@mui/lab';
@@ -15,8 +14,8 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { Auth, Hub } from 'aws-amplify';
 import Link from '@mui/material/Link';
 import { ICognitoAuthError } from '../components/auth/Cognito-errors';
-import { AuthContext } from '../context/AuthContext';
 import { useSnackbar } from 'notistack';
+import { useUserStore } from '../store/user';
 
 const registerSchema = object({
   activationCode: string().min(1, 'Please Enter Activation Code'),
@@ -28,7 +27,7 @@ interface LocationState {
 }
 
 export default function VerifyEmail() {
-  const { setIsAuth } = useContext(AuthContext);
+  const setIsAuth = useUserStore((state) => state.setIsAuth);
   const { enqueueSnackbar } = useSnackbar();
 
   const navigate = useNavigate();

@@ -1,6 +1,5 @@
-import { MouseEvent, useContext, useState } from 'react';
+import { MouseEvent, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { AuthContext } from '../../context/AuthContext';
 import { Auth } from 'aws-amplify';
 import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
@@ -15,6 +14,7 @@ import Tooltip from '@mui/material/Tooltip';
 import MenuItem from '@mui/material/MenuItem';
 import AdbIcon from '@mui/icons-material/Adb';
 import { useSnackbar } from 'notistack';
+import { useUserStore } from '../../store/user';
 import { useLogout } from '../../hooks/useLogout';
 
 const links = [
@@ -29,7 +29,7 @@ const links = [
 ];
 
 const Navbar = () => {
-  const { isAuth } = useContext(AuthContext);
+  const isAuth = useUserStore((state) => state.isAuth);
   const [anchorElUser, setAnchorElUser] = useState<null | HTMLElement>(null);
   const navigate = useNavigate();
   const { enqueueSnackbar } = useSnackbar();

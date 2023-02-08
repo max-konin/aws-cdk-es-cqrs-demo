@@ -1,5 +1,3 @@
-import * as React from 'react';
-import { useContext } from 'react';
 import Avatar from '@mui/material/Avatar';
 import CssBaseline from '@mui/material/CssBaseline';
 import TextField from '@mui/material/TextField';
@@ -10,7 +8,6 @@ import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
-import { AuthContext } from '../context/AuthContext';
 import { Auth } from 'aws-amplify';
 import { object, string, TypeOf } from 'zod';
 import { Controller, SubmitHandler, useForm } from 'react-hook-form';
@@ -23,6 +20,7 @@ import {
 } from '../components/auth/Cognito-errors';
 import OutlinePasswordInput from '../components/ui/form/OutlinePasswordInput';
 import { useSnackbar } from 'notistack';
+import { useUserStore } from '../store/user';
 
 const theme = createTheme();
 
@@ -37,7 +35,7 @@ type RegisterInput = TypeOf<typeof registerSchema>;
 
 function Login() {
   const navigate = useNavigate();
-  const { setIsAuth } = useContext(AuthContext);
+  const setIsAuth = useUserStore((state) => state.setIsAuth);
   const { enqueueSnackbar } = useSnackbar();
 
   const {
