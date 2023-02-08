@@ -1,11 +1,11 @@
-import { useContext } from 'react';
 import { Navigate, Route, Routes } from 'react-router-dom';
 import { publicRoutes, privateRoutes } from '../router';
-import { AuthContext } from '../context/AuthContext';
 import { Loader } from '@aws-amplify/ui-react';
+import { useUserStore } from '../store/user';
 
 const AppRouter = () => {
-  const { isAuth, isLoading } = useContext(AuthContext);
+  const isAuth = useUserStore((state) => state.isAuth);
+  const isLoading = useUserStore((state) => state.isLoading);
 
   if (isLoading) {
     return <Loader />;

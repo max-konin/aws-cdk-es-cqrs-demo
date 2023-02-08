@@ -2,8 +2,7 @@
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 import { useEffect, useState } from 'react';
-import { GraphQLResult } from '@aws-amplify/api-graphql';
-import { API, graphqlOperation } from 'aws-amplify';
+import { API } from 'aws-amplify';
 import '@aws-amplify/ui-react/styles.css';
 import {
   Button,
@@ -15,56 +14,25 @@ import {
   TableHead,
   TableRow,
 } from '@aws-amplify/ui-react';
-import { getAllAccounts } from '../graphql/queries';
-import { creditAccount, debitAccount, openAccount } from '../graphql/mutations';
-import { v4 } from 'uuid';
-import {
-  Account,
-  GetAllAccountsQuery,
-  OpenedAccountSubscription,
-} from '../API';
-import { openedAccount } from '../graphql/subscriptions';
+import { creditAccount, debitAccount } from '../graphql/mutations';
+import { useAccountStore } from '../store/accounts';
 
 function Dashboard() {
-  const [accounts, setAccounts] = useState<Account[]>([]);
+  const subscribeOnAccountOpened = useAccountStore(
+    (state) => state.subscribeOnAccountOpened
+  );
+  const findAccounts = useAccountStore((state) => state.findAccounds);
+  const addAccount = useAccountStore((state) => state.addAccount);
+  const accounts = useAccountStore((state) => state.accounts);
+
   const [accountToChangeId, setAccountToChangeId] = useState<string>();
   const [amount, setAmount] = useState(100);
 
-  const subscribeOnAccountOpened = () => {
-    API.graphql(graphqlOperation(openedAccount)).subscribe({
-      next: ({
-        value,
-      }: Record<'value', Record<'data', OpenedAccountSubscription>>) => {
-        const { openedAccount } = value.data;
-        if (!openedAccount) return;
-        setAccounts([...accounts, openedAccount]);
-      },
-    });
-  };
-
-  const fetchAccounts = async () => {
-    const res = (await API.graphql(
-      graphqlOperation(getAllAccounts)
-    )) as GraphQLResult<GetAllAccountsQuery>;
-
-    setAccounts(res.data?.getAllAccounts || []);
-  };
-
   useEffect(() => {
-    void fetchAccounts();
+    void findAccounts();
     subscribeOnAccountOpened();
+    setAccountToChangeId(accounts[0]?.id || '');
   }, []);
-
-  const openNewAccount = async () => {
-    await API.graphql({
-      query: openAccount,
-      variables: {
-        input: {
-          accountId: v4(),
-        },
-      },
-    });
-  };
 
   const creditAccountAction = async () => {
     if (!accountToChangeId || !amount) return;
@@ -110,7 +78,7 @@ function Dashboard() {
       </Table>
       <hr />
 
-      <Button onClick={() => openNewAccount()}>Open New Account</Button>
+      <Button onClick={() => void addAccount()}>Open New Account</Button>
 
       <hr />
 
@@ -129,8 +97,8 @@ function Dashboard() {
         max={1000}
       />
 
-      <Button onClick={() => debitAccountAction()}>Debit</Button>
-      <Button onClick={() => creditAccountAction()}>Credit</Button>
+      <Button onClick={() => void debitAccountAction()}>Debit</Button>
+      <Button onClick={() => void creditAccountAction()}>Credit</Button>
     </div>
   );
 }

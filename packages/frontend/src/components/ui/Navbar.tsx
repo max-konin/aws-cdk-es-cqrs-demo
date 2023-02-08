@@ -1,11 +1,12 @@
 import { useContext } from 'react';
 import { Link } from 'react-router-dom';
-import { AuthContext } from '../../context/AuthContext';
 import { Auth } from 'aws-amplify';
 import cls from './Navbar.module.css';
+import { useUserStore } from '../../store/user';
 
 const Navbar = () => {
-  const { isAuth, setIsAuth } = useContext(AuthContext);
+  const isAuth = useUserStore((state) => state.isAuth);
+  const setIsAuth = useUserStore((state) => state.setIsAuth);
 
   const logout = async () => {
     try {
