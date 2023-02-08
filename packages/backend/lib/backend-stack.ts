@@ -10,6 +10,11 @@ import { AccountsConstruct } from './accounts/accounts-construct';
 import { aws_dynamodb } from 'aws-cdk-lib';
 import { StreamViewType } from 'aws-cdk-lib/aws-dynamodb';
 import * as cognito from 'aws-cdk-lib/aws-cognito';
+import {
+  IdentityPool,
+  UserPoolAuthenticationProvider,
+} from '@aws-cdk/aws-cognito-identitypool-alpha';
+import * as s3 from 'aws-cdk-lib/aws-s3';
 
 export class BackendStack extends cdk.Stack {
   constructor(scope: Construct, id: string, props?: cdk.StackProps) {
@@ -89,6 +94,29 @@ export class BackendStack extends cdk.Stack {
       writeAttributes: clientWriteAttributes,
     });
 
+    const identityPool = new IdentityPool(this, 'tl-identity-pool', {
+      authenticationProviders: {
+        userPools: [new UserPoolAuthenticationProvider({ userPool })],
+      },
+    });
+
+    const documentsBucket = new s3.Bucket(this, 'tl-documents-bucket', {
+      blockPublicAccess: s3.BlockPublicAccess.BLOCK_ALL,
+      cors: [
+        {
+          allowedMethods: [
+            s3.HttpMethods.GET,
+            s3.HttpMethods.POST,
+            s3.HttpMethods.PUT,
+          ],
+          allowedOrigins: ['*'],
+          allowedHeaders: ['*'],
+        },
+      ],
+    });
+
+    documentsBucket.grantReadWrite(identityPool.authenticatedRole);
+
     const eventStore = new aws_dynamodb.Table(this, 'EventStore', {
       partitionKey: {
         name: 'id',
@@ -157,6 +185,14 @@ export class BackendStack extends cdk.Stack {
 
     new cdk.CfnOutput(this, 'UserPoolClientId', {
       value: userPoolClient.userPoolClientId,
+    });
+
+    new cdk.CfnOutput(this, 'IdentityPoolId', {
+      value: identityPool.identityPoolId,
+    });
+
+    new cdk.CfnOutput(this, 'DocumentsBucket', {
+      value: documentsBucket.bucketName,
     });
 
     const accountsMutationsDS = api.addLambdaDataSource(

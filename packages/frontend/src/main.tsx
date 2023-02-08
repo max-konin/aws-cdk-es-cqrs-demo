@@ -13,9 +13,17 @@ Amplify.configure({
   aws_appsync_authenticationType: 'AMAZON_COGNITO_USER_POOLS',
   aws_appsync_apiKey: Params.BackendStack.GraphQLAPIKey,
   Auth: {
-    userPoolId: Params.BackendStack.UserPullId,
-    authenticationFlowType: 'USER_PASSWORD_AUTH',
-    userPoolWebClientId: Params.BackendStack.UserPoolClientId,
+    userPoolId: 'us-east-1_dmJ7e7moi',
+    authenticationFlowType: 'USER_SRP_AUTH',
+    userPoolWebClientId: '6fkae6gmpvb0u8c38k8e95jo6h',
+    identityPoolId: 'us-east-1:fb8cea0c-0372-4a63-a641-058d14ab6996',
+    region: 'us-east-1',
+  },
+  Storage: {
+    AWSS3: {
+      bucket: 'backendstack-tldocumentsbucket4f1a8f77-tug0tnc9cqow', //REQUIRED -  Amazon S3 bucket name
+      region: 'us-east-1', //OPTIONAL -  Amazon service region
+    },
   },
 });
 
