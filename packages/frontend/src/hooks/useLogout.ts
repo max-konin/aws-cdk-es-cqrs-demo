@@ -1,10 +1,10 @@
+
 import { Auth } from 'aws-amplify';
-import { useContext } from 'react';
-import { AuthContext } from '../context/AuthContext';
 import { useSnackbar } from 'notistack';
+import { useUserStore } from '../store/user';
 
 export const useLogout = () => {
-  const { setIsAuth } = useContext(AuthContext);
+  const setIsAuth = useUserStore((state) => state.setIsAuth);
   const { enqueueSnackbar } = useSnackbar();
 
   const logoutCb = async () => {
