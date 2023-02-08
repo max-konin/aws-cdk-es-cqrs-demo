@@ -15,6 +15,7 @@ import MenuItem from '@mui/material/MenuItem';
 import AdbIcon from '@mui/icons-material/Adb';
 import { useSnackbar } from 'notistack';
 import { useUserStore } from '../../store/user';
+import { useLogout } from '../../hooks/useLogout';
 
 const links = [
   {
@@ -29,24 +30,12 @@ const links = [
 
 const Navbar = () => {
   const isAuth = useUserStore((state) => state.isAuth);
-  const setIsAuth = useUserStore((state) => state.setIsAuth);
- 
   const [anchorElUser, setAnchorElUser] = useState<null | HTMLElement>(null);
   const navigate = useNavigate();
   const { enqueueSnackbar } = useSnackbar();
+  const logout = useLogout();
 
   if (!isAuth) return <div></div>;
-
-  const logout = async () => {
-    try {
-      await Auth.signOut();
-      setIsAuth(false);
-    } catch (error: unknown) {
-      enqueueSnackbar(`Error signing out: ${error as string}`, {
-        variant: 'error',
-      });
-    }
-  };
 
   const deleteUser = async () => {
     handleCloseUserMenu();
