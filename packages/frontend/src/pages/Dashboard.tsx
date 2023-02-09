@@ -1,8 +1,4 @@
-/* eslint-disable @typescript-eslint/no-unsafe-call */
-/* eslint-disable @typescript-eslint/no-unsafe-member-access */
-/* eslint-disable @typescript-eslint/ban-ts-comment */
-import { useEffect, useState } from 'react';
-import { API } from 'aws-amplify';
+import { useState } from 'react';
 import '@aws-amplify/ui-react/styles.css';
 import {
   Button,
@@ -14,80 +10,120 @@ import {
   TableHead,
   TableRow,
 } from '@aws-amplify/ui-react';
-import { creditAccount, debitAccount } from '../graphql/mutations';
-import { useAccountStore } from '../store/accounts';
+import {
+  OpenAccountData,
+  OpenAccountVariables,
+  creditAccount,
+  debitAccount,
+  DebitAccountData,
+  openAccount,
+  UpdateAccountVariables,
+} from '../graphql/mutations';
+import { getAllAccounts, GetAllAccountsData } from '../graphql/queries';
+import { Account, CreditAccountMutation } from '../API';
+import { useGraphQLMutaion, useGraphQLQuery } from '../lib/graphQL';
+import { v4 } from 'uuid';
+import { useQueryClient } from 'react-query';
 
 function Dashboard() {
-  const subscribeOnAccountOpened = useAccountStore(
-    (state) => state.subscribeOnAccountOpened
+  const queryClient = useQueryClient();
+  const { data } = useGraphQLQuery<GetAllAccountsData>(
+    ['getAllAccounts'],
+    getAllAccounts
   );
-  const findAccounts = useAccountStore((state) => state.findAccounds);
-  const addAccount = useAccountStore((state) => state.addAccount);
-  const accounts = useAccountStore((state) => state.accounts);
-
-  const [accountToChangeId, setAccountToChangeId] = useState<string>();
-  const [amount, setAmount] = useState(100);
-
-  useEffect(() => {
-    void findAccounts();
-    subscribeOnAccountOpened();
-    setAccountToChangeId(accounts[0]?.id || '');
-  }, []);
-
-  const creditAccountAction = async () => {
-    if (!accountToChangeId || !amount) return;
-
-    await API.graphql({
-      query: creditAccount,
-      variables: { input: { accountId: accountToChangeId, amount } },
-    });
-  };
-
-  const debitAccountAction = async () => {
-    if (!accountToChangeId || !amount) return;
-
-    await API.graphql({
-      query: debitAccount,
-      variables: { input: { accountId: accountToChangeId, amount } },
-    });
-  };
-
-  const accountsList = accounts.map(({ id, balance }) => (
-    <TableRow key={id}>
-      <TableCell>{id}</TableCell>
-      <TableCell>{balance}</TableCell>
-    </TableRow>
-  ));
-
-  const accountIdOptions = accounts.map(({ id }) => (
-    <option key={id} value={id}>
-      {id}
-    </option>
-  ));
+  const { mutateAsync } = useGraphQLMutaion<OpenAccountData, OpenAccountVariables>(
+    openAccount,
+    {
+      onSuccess: () => queryClient.invalidateQueries(['getAllAccounts']),
+    }
+  );
 
   return (
     <div>
-      <Table caption="" highlightOnHover={false}>
-        <TableHead>
-          <TableRow>
-            <TableCell as="th">ID</TableCell>
-            <TableCell as="th">Balance</TableCell>
+      <AccountsTable accounts={data?.getAllAccounts ?? []} />
+      <hr />
+
+      <Button
+        onClick={() =>
+          void mutateAsync({
+            input: {
+              accountId: v4(),
+            },
+          })
+        }
+      >
+        Open New Account
+      </Button>
+
+      <hr />
+
+      <AccountPanel accounts={data?.getAllAccounts ?? []} />
+    </div>
+  );
+}
+
+function AccountsTable(props: { accounts: Account[] }) {
+  return (
+    <Table caption="" highlightOnHover={false}>
+      <TableHead>
+        <TableRow>
+          <TableCell as="th">ID</TableCell>
+          <TableCell as="th">Balance</TableCell>
+        </TableRow>
+      </TableHead>
+      <TableBody>
+        {props.accounts.map(({ id, balance }) => (
+          <TableRow key={id}>
+            <TableCell>{id}</TableCell>
+            <TableCell>{balance}</TableCell>
           </TableRow>
-        </TableHead>
-        <TableBody>{accountsList}</TableBody>
-      </Table>
-      <hr />
+        ))}
+      </TableBody>
+    </Table>
+  );
+}
 
-      <Button onClick={() => void addAccount()}>Open New Account</Button>
+function AccountPanel(props: { accounts: Account[] }) {
+  const [currentId, setCurrentId] = useState<string>(props.accounts[0]?.id);
+  const [amount, setAmount] = useState(100);
+  const queryClient = useQueryClient();
 
-      <hr />
+  const { mutateAsync: creditMutation } = useGraphQLMutaion<
+    CreditAccountMutation,
+    UpdateAccountVariables
+  >(creditAccount, {
+    onSuccess: () => queryClient.invalidateQueries(['getAllAccounts']), // somtimes load old data
+  });
 
+  const { mutateAsync: debitMutation } = useGraphQLMutaion<
+    DebitAccountData,
+    UpdateAccountVariables
+  >(debitAccount, {
+    onSuccess: () => queryClient.invalidateQueries(['getAllAccounts']),
+  });
+
+  const creditAccountAction = async () => {
+    if (!currentId || !amount) return;
+
+    await creditMutation({ input: { accountId: currentId, amount } });
+  };
+
+  const debitAccountAction = async () => {
+    if (!currentId || !amount) return;
+
+    await debitMutation({ input: { accountId: currentId, amount } });
+  };
+
+  return (
+    <div>
       <SelectField
         label="AccountId"
-        value={accountToChangeId}
-        onChange={(e) => setAccountToChangeId(e.target.value)}
+        value={currentId}
+        onChange={(e) => setCurrentId(e.target.value)}
       >
-        {accountIdOptions}
+        {props.accounts.map((a) => (
+          <option>{a.id}</option>
+        ))}
       </SelectField>
 
       <SliderField

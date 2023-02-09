@@ -5,6 +5,17 @@ import { Auth } from 'aws-amplify';
 import CssBaseline from '@mui/material/CssBaseline';
 import Navbar from './components/ui/Navbar';
 import { useUserStore } from './store/user';
+import { QueryClient, QueryClientProvider } from 'react-query';
+
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      refetchInterval: 60000,
+      refetchOnMount: true,
+      refetchOnWindowFocus: false
+    }
+  }
+});
 
 function App() {
   const setIsAuth = useUserStore((state) => state.setIsAuth);
@@ -26,9 +37,11 @@ function App() {
 
   return (
     <div className="app">
-      <CssBaseline />
-      <Navbar />
-      <AppRouter />
+      <QueryClientProvider client={queryClient}>
+        <CssBaseline />
+        <Navbar />
+        <AppRouter />
+      </QueryClientProvider>
     </div>
   );
 }

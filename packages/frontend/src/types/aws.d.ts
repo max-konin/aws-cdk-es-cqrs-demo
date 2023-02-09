@@ -104,7 +104,7 @@ declare module 'aws-amplify' {
     Hub: Hub;
     Amplify: Amplify;
     API: API;
-    graphqlOperation: (subscription: string) => GraphQLOptions;
+    graphqlOperation: (subscription: string, variables?: any) => GraphQLOptions;
   }
 
   const aws: AWS;
