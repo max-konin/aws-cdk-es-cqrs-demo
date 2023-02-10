@@ -30,6 +30,7 @@ const links = [
 
 const Navbar = () => {
   const isAuth = useUserStore((state) => state.isAuth);
+  const setIsAuth = useUserStore((state) => state.setIsAuth);
   const [anchorElUser, setAnchorElUser] = useState<null | HTMLElement>(null);
   const navigate = useNavigate();
   const { enqueueSnackbar } = useSnackbar();
@@ -41,6 +42,7 @@ const Navbar = () => {
     handleCloseUserMenu();
     try {
       await Auth.deleteUser();
+      setIsAuth(false);
     } catch (error) {
       enqueueSnackbar(`Error deleting user: ${error as string}`, {
         variant: 'error',

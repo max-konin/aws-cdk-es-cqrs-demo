@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 import '@aws-amplify/ui-react/styles.css';
-import AppRouter from './components/AppRouter';
+import AppRouter from './router/AppRouter';
 import { Auth } from 'aws-amplify';
 import CssBaseline from '@mui/material/CssBaseline';
 import Navbar from './components/ui/Navbar';
@@ -12,9 +12,9 @@ const queryClient = new QueryClient({
     queries: {
       refetchInterval: 60000,
       refetchOnMount: true,
-      refetchOnWindowFocus: false
-    }
-  }
+      refetchOnWindowFocus: false,
+    },
+  },
 });
 
 function App() {
@@ -23,6 +23,7 @@ function App() {
 
   const checkLogin = async () => {
     setIsLoading(true);
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
     const user = await Auth.currentUserInfo();
     if (user) {
       setIsAuth(true);

@@ -7,6 +7,7 @@ import { BrowserRouter } from 'react-router-dom';
 import { SnackbarProvider } from 'notistack';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 Amplify.configure({
   aws_appsync_region: Params.BackendStack.StackRegion,
@@ -19,6 +20,7 @@ Amplify.configure({
     userPoolWebClientId: Params.BackendStack.UserPoolClientId,
   },
 });
+/* eslint-enable @typescript-eslint/no-unsafe-assignment */
 /* eslint-enable @typescript-eslint/no-unsafe-member-access */
 
 const theme = createTheme();

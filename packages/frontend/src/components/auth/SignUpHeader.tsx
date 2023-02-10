@@ -1,7 +1,9 @@
-import * as React from 'react';
 import Link from '@mui/material/Link';
 import Grid from '@mui/material/Grid';
+import { useNavigate } from 'react-router-dom';
 export default function SignUpHeader() {
+  const navigate = useNavigate();
+
   return (
     <>
       <Grid
@@ -12,7 +14,12 @@ export default function SignUpHeader() {
       >
         <Grid item>LOGO</Grid>
         <Grid item>
-          <Link href="/login" variant="body2" ml="auto">
+          <Link
+            component="button"
+            variant="subtitle2"
+            ml="auto"
+            onClick={() => navigate('/login')}
+          >
             Already have an account? Sign in
           </Link>
         </Grid>

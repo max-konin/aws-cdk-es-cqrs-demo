@@ -1,6 +1,7 @@
 import Login from '../pages/Login';
 import SignUp from '../pages/SignUp';
 import VerifyEmail from '../pages/VerifyEmail';
+import ForgotPassword from '../pages/ForgotPassword';
 
 export const publicRoutes = [
   {
@@ -14,5 +15,9 @@ export const publicRoutes = [
   {
     path: '/verify-email',
     element: <VerifyEmail />,
+  },
+  {
+    path: '/forgot-password',
+    element: <ForgotPassword />,
   },
 ];

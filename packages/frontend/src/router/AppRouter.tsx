@@ -1,5 +1,6 @@
 import { Navigate, Route, Routes } from 'react-router-dom';
-import { publicRoutes, privateRoutes } from '../router';
+import { privateRoutes } from './private';
+import { publicRoutes } from './public';
 import { Loader } from '@aws-amplify/ui-react';
 import { useUserStore } from '../store/user';
 

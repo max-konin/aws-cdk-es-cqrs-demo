@@ -1,5 +1,4 @@
-import * as React from 'react';
-import { useState } from 'react';
+import { useState, MouseEvent } from 'react';
 import { Control, Controller, FieldError } from 'react-hook-form';
 import {
   FormControl,
@@ -22,9 +21,7 @@ interface IOutlinePasswordInput {
 export default function OutlinePasswordInput(props: IOutlinePasswordInput) {
   const [showPassword, setShowPassword] = useState(false);
   const handleClickShowPassword = () => setShowPassword((show) => !show);
-  const handleMouseDownPassword = (
-    event: React.MouseEvent<HTMLButtonElement>
-  ) => {
+  const handleMouseDownPassword = (event: MouseEvent<HTMLButtonElement>) => {
     event.preventDefault();
   };
   return (

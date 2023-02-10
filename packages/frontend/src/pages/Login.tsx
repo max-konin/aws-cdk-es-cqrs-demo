@@ -38,17 +38,27 @@ function Login() {
   const setIsAuth = useUserStore((state) => state.setIsAuth);
   const { enqueueSnackbar } = useSnackbar();
 
-  const {
-    handleSubmit,
-    control,
-    formState: { errors, isSubmitting },
-  } = useForm({
+  const { handleSubmit, control, formState, getValues } = useForm({
+    mode: 'onChange',
     resolver: zodResolver(registerSchema),
     defaultValues: {
       email: '',
       password: '',
     },
   });
+
+  const { errors, isSubmitting } = formState;
+
+  const forgotPaswLinkAction = () => {
+    const username = getValues('email');
+    if (!errors.email) {
+      navigate('/forgot-password', { state: { username } });
+    } else {
+      enqueueSnackbar('Username is invalid', {
+        variant: 'error',
+      });
+    }
+  };
 
   const onSubmit: SubmitHandler<RegisterInput> = async (data) => {
     try {
@@ -128,13 +138,21 @@ function Login() {
             </LoadingButton>
             <Grid container>
               <Grid item xs>
-                <Link href="#" variant="body2">
+                <Link
+                  component="button"
+                  variant="subtitle2"
+                  onClick={forgotPaswLinkAction}
+                >
                   Forgot password?
                 </Link>
               </Grid>
               <Grid item>
-                <Link href="/signup" variant="body2">
-                  {"Don't have an account? Sign Up"}
+                <Link
+                  component="button"
+                  variant="subtitle2"
+                  onClick={() => navigate('/signup')}
+                >
+                  Don't have an account? Sign Up
                 </Link>
               </Grid>
             </Grid>
