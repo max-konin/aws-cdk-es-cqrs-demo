@@ -5,6 +5,11 @@ import { Command } from '../../framework/command';
 export const CreditAccountCommandInput = z.object({
   accountId: z.string(),
   amount: z.number().gt(0),
+  issuer: z.object({
+    userId: z.string(),
+    userEmail: z.string(),
+    tenantId: z.string(),
+  }),
 });
 export type CreditAccountCommandInputType = z.infer<
   typeof CreditAccountCommandInput

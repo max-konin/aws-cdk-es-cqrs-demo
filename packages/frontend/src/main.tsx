@@ -25,6 +25,14 @@ Amplify.configure({
       region: 'us-east-1', //OPTIONAL -  Amazon service region
     },
   },
+  API: {
+    graphql_headers: async () => {
+      const session = await Auth.currentSession();
+      return {
+        Authorization: session.getIdToken().getJwtToken(),
+      };
+    },
+  },
 });
 
 Auth.configure();

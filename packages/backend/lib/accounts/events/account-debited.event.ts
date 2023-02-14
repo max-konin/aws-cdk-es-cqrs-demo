@@ -4,6 +4,11 @@ import { Event } from '../../framework/event';
 interface AccountDebitedEventData {
   accountId: string;
   amount: number;
+  issuer: {
+    userId: string;
+    userEmail: string;
+    tenantId: string;
+  };
 }
 
 export class AccountDebitedEvent extends Event<

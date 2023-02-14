@@ -27,7 +27,7 @@ function Files() {
     return <span>Error: {(error as Record<'message', string>).message}</span>;
   }
 
-  const listOfFiles = data?.map((file) => <li>{file}</li>);
+  const listOfFiles = data?.map((file) => <li key={file}>{file}</li>);
 
   return (
     <div>

@@ -23,6 +23,7 @@ const projectAccountOpenedEvent = async (
       Item: {
         id: event.entityId,
         balance: 0,
+        tenantId: event.data.issuer.tenantId,
       },
     })
     .promise();

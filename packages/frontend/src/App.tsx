@@ -3,7 +3,7 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 import React, { useEffect, useState } from 'react';
 import { GraphQLResult } from '@aws-amplify/api-graphql';
-import { API, graphqlOperation } from 'aws-amplify';
+import { API, Auth, graphqlOperation } from 'aws-amplify';
 import '@aws-amplify/ui-react/styles.css';
 import {
   Table,
@@ -98,10 +98,24 @@ function App() {
     </option>
   ));
 
+  const services = {
+    handleSignUp(formData: any) {
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+      return Auth.signUp({
+        ...formData,
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+        attributes: {
+          ...formData.attributes,
+          'custom:tenantId': 'MY_TENANT',
+        },
+      });
+    },
+  };
+
   return (
     <div className="App">
       <QueryClientProvider client={queryClient}>
-        <Authenticator>
+        <Authenticator services={services}>
           {({ signOut, user }) => (
             <main>
               <h1>Hello {user?.username}</h1>

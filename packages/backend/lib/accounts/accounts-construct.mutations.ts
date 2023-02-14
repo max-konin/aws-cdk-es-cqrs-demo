@@ -11,25 +11,42 @@ type AppSyncEvent = {
     fieldName: string;
   };
   arguments: {
-    input: any;
+    input: object;
+  };
+  identity: {
+    claims: {
+      email: string;
+      sub: string;
+      'custom:tenantId': string;
+    };
   };
 };
+
+const extractIssuer = (appSyncEvent: AppSyncEvent) => ({
+  userId: appSyncEvent.identity.claims.sub,
+  tenantId: appSyncEvent.identity.claims['custom:tenantId'],
+  userEmail: appSyncEvent.identity.claims.email,
+});
+
+const inputWithIssuer = (appSyncEvent: AppSyncEvent) => ({
+  ...appSyncEvent.arguments.input,
+  issuer: extractIssuer(appSyncEvent),
+});
 
 const buildCommand = (appSyncEvent: AppSyncEvent) => {
   switch (appSyncEvent.info.fieldName) {
     case 'creditAccount':
-      return new CreditAccountCommand(appSyncEvent.arguments.input);
+      return new CreditAccountCommand(inputWithIssuer(appSyncEvent));
     case 'openAccount':
-      return new OpenAccountCommand(appSyncEvent.arguments.input);
+      return new OpenAccountCommand(inputWithIssuer(appSyncEvent));
     case 'debitAccount':
-      return new DebitAccountCommand(appSyncEvent.arguments.input);
+      return new DebitAccountCommand(inputWithIssuer(appSyncEvent));
     default:
       return null;
   }
 };
 
 export const handler = async (appSyncEvent: AppSyncEvent) => {
-  console.log(appSyncEvent);
   const cmd = buildCommand(appSyncEvent);
 
   if (!cmd) throw new Error('Unknown command');
