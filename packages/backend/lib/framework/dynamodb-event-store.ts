@@ -44,11 +44,10 @@ export class DynamoDBEventStore implements EventStore {
     return items
       .sort((a, b) => a.timestamp - b.timestamp)
       .map((record) => {
-        // @ts-ignore
-        const eventClass = eventsRegistry[record.eventName];
+        const eventClass = eventsRegistry[record.eventName as string];
         if (!eventClass) return undefined;
-        return new eventClass(record.data, record.id) as Event;
+        return new eventClass(record.data, record.id as string);
       })
-      .filter((e) => e !== undefined) as Event[];
+      .filter((e) => e) as Event<'accountId', Record<'accountId', string>>[];
   }
 }

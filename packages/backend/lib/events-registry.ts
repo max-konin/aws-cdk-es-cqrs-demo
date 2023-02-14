@@ -6,8 +6,13 @@ import {
   ACCOUNT_DEBITED_EVENT_TYPE,
   ACCOUNT_OPENED_EVENT_TYPE,
 } from './events';
+import { Event } from './framework/event';
 
-export const eventsRegistry = {
+interface A {
+  [key: string]: new (data: any, id?: string) => Event<'accountId'>;
+}
+
+export const eventsRegistry: A = {
   [ACCOUNT_OPENED_EVENT_TYPE]: AccountOpenedEvent,
   [ACCOUNT_CREDITED_EVENT_TYPE]: AccountCreditedEvent,
   [ACCOUNT_DEBITED_EVENT_TYPE]: AccountDebitedEvent,
