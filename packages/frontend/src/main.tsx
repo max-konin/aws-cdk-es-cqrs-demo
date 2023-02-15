@@ -13,10 +13,10 @@ Amplify.configure({
   aws_appsync_authenticationType: 'AMAZON_COGNITO_USER_POOLS',
   aws_appsync_apiKey: Params.BackendStack.GraphQLAPIKey,
   Auth: {
-    userPoolId: 'us-east-1_dmJ7e7moi',
+    userPoolId: 'us-east-1_FVsZHqkAA',
     authenticationFlowType: 'USER_SRP_AUTH',
-    userPoolWebClientId: '6fkae6gmpvb0u8c38k8e95jo6h',
-    identityPoolId: 'us-east-1:fb8cea0c-0372-4a63-a641-058d14ab6996',
+    userPoolWebClientId: '21ss6ea1eiodndg43tiet0e67u',
+    identityPoolId: 'us-east-1:011c8bcb-3923-4d7b-b661-ba04cfa374a0',
     region: 'us-east-1',
   },
   Storage: {
@@ -32,7 +32,7 @@ Amplify.configure({
         Authorization: session.getIdToken().getJwtToken(),
       };
     },
-  },
+  }
 });
 
 Auth.configure();

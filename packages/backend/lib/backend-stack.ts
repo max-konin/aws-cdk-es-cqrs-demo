@@ -1,9 +1,9 @@
 import * as cdk from 'aws-cdk-lib';
-import { SchemaFile } from 'aws-cdk-lib/aws-appsync';
 import {
   GraphqlApi,
   AuthorizationType,
   MappingTemplate,
+  SchemaFile,
 } from 'aws-cdk-lib/aws-appsync';
 import { Construct } from 'constructs';
 import { AccountsConstruct } from './accounts/accounts-construct';
@@ -67,17 +67,17 @@ export class BackendStack extends cdk.Stack {
       website: true,
     };
 
-    const clientReadAttributes =
-      new cognito.ClientAttributes().withStandardAttributes(
-        standardCognitoAttributes
-      );
+    const clientReadAttributes = new cognito.ClientAttributes()
+      .withStandardAttributes(standardCognitoAttributes)
+      .withCustomAttributes('custom:tenantId');
 
-    const clientWriteAttributes =
-      new cognito.ClientAttributes().withStandardAttributes({
+    const clientWriteAttributes = new cognito.ClientAttributes()
+      .withStandardAttributes({
         ...standardCognitoAttributes,
         emailVerified: false,
         phoneNumberVerified: false,
-      });
+      })
+      .withCustomAttributes('custom:tenantId');
 
     // 👇 User Pool Client
     const userPoolClient = new cognito.UserPoolClient(this, 'userpool-client', {
@@ -129,8 +129,12 @@ export class BackendStack extends cdk.Stack {
       stream: StreamViewType.NEW_AND_OLD_IMAGES,
     });
 
-    const accountsTable = new aws_dynamodb.Table(this, 'ReadStoreAccounts', {
+    const accountsTable = new aws_dynamodb.Table(this, 'ReadStoreAccountsV2', {
       partitionKey: {
+        name: 'tenantId',
+        type: aws_dynamodb.AttributeType.STRING,
+      },
+      sortKey: {
         name: 'id',
         type: aws_dynamodb.AttributeType.STRING,
       },
@@ -224,7 +228,19 @@ export class BackendStack extends cdk.Stack {
     accountsDynamoDataSource.createResolver('getAllAccounts', {
       typeName: 'Query',
       fieldName: 'getAllAccounts',
-      requestMappingTemplate: MappingTemplate.dynamoDbScanTable(true),
+      requestMappingTemplate: MappingTemplate.fromString(`{
+        "version": "2017-02-28",
+        "operation": "Query",
+        "query": {
+          "expression": "#tenantId = :tenantId",
+          "expressionNames": {
+            "#tenantId": "tenantId"
+          },
+          "expressionValue": {
+            ":tenantId": $util.dynamodb.toDynamoDBJson($ctx.identity.claims.get("custom:tenantId"))
+          }
+        }
+      }`),
       responseMappingTemplate: MappingTemplate.dynamoDbResultList(),
     });
   }
