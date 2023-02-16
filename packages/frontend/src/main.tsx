@@ -6,6 +6,8 @@ import Params from '../../backend/cdk-outputs.json';
 import { BrowserRouter } from 'react-router-dom';
 import { SnackbarProvider } from 'notistack';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
+import '@aws-amplify/ui-react/styles.css';
+import AppAuthenticator from './components/auth/AppAuthenticator';
 
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
@@ -27,11 +29,13 @@ const theme = createTheme();
 Auth.configure();
 
 createRoot(document.getElementById('root') as HTMLElement).render(
-  <ThemeProvider theme={theme}>
-    <SnackbarProvider maxSnack={3}>
-      <BrowserRouter>
-        <App />
-      </BrowserRouter>
-    </SnackbarProvider>
-  </ThemeProvider>
+  <AppAuthenticator>
+    <ThemeProvider theme={theme}>
+      <SnackbarProvider maxSnack={3}>
+        <BrowserRouter>
+          <App />
+        </BrowserRouter>
+      </SnackbarProvider>
+    </ThemeProvider>
+  </AppAuthenticator>
 );

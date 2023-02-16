@@ -31,12 +31,12 @@ function Dashboard() {
     ['getAllAccounts'],
     getAllAccounts
   );
-  const { mutateAsync } = useGraphQLMutaion<OpenAccountData, OpenAccountVariables>(
-    openAccount,
-    {
-      onSuccess: () => queryClient.invalidateQueries(['getAllAccounts']),
-    }
-  );
+  const { mutateAsync } = useGraphQLMutaion<
+    OpenAccountData,
+    OpenAccountVariables
+  >(openAccount, {
+    onSuccess: () => queryClient.invalidateQueries(['getAllAccounts']),
+  });
 
   return (
     <div>
@@ -122,7 +122,7 @@ function AccountPanel(props: { accounts: Account[] }) {
         onChange={(e) => setCurrentId(e.target.value)}
       >
         {props.accounts.map((a) => (
-          <option>{a.id}</option>
+          <option key={a.id}>{a.id}</option>
         ))}
       </SelectField>
 

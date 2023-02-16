@@ -1,18 +1,18 @@
 import { Auth } from 'aws-amplify';
 import { useSnackbar } from 'notistack';
 
-export const useLogout = () => {
+export const useDeleteUser = () => {
   const { enqueueSnackbar } = useSnackbar();
 
-  const logoutCb = async () => {
+  const deleteUserCb = async () => {
     try {
-      await Auth.signOut();
+      await Auth.deleteUser();
     } catch (error: unknown) {
-      enqueueSnackbar(`Error signing out: ${error as string}`, {
+      enqueueSnackbar(`Error deleting user: ${error as string}`, {
         variant: 'error',
       });
     }
   };
 
-  return logoutCb;
+  return deleteUserCb;
 };

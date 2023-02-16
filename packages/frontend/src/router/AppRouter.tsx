@@ -1,26 +1,13 @@
 import { Navigate, Route, Routes } from 'react-router-dom';
 import { privateRoutes } from './private';
-import { publicRoutes } from './public';
-import { Loader } from '@aws-amplify/ui-react';
-import { useUserStore } from '../store/user';
 
 const AppRouter = () => {
-  const isAuth = useUserStore((state) => state.isAuth);
-  const isLoading = useUserStore((state) => state.isLoading);
-
-  if (isLoading) {
-    return <Loader />;
-  }
-
-  const routes = isAuth ? privateRoutes : publicRoutes;
-  const redirectTo = isAuth ? '/' : '/login';
-
   return (
     <Routes>
-      {routes.map((route) => (
+      {privateRoutes.map((route) => (
         <Route key={route.path} element={route.element} path={route.path} />
       ))}
-      <Route path="*" element={<Navigate to={redirectTo} replace />} />
+      <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
   );
 };
