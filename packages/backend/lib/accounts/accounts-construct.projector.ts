@@ -1,9 +1,8 @@
-/* eslint-disable @typescript-eslint/no-unsafe-member-access */
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import * as AWS from 'aws-sdk';
 import { Record } from 'aws-sdk/clients/dynamodbstreams';
 import { eventsRegistry } from '../events-registry';
 import { projector } from './projectors/accounts';
+
 
 interface AWSEvent {
   Records: Record[];
@@ -31,15 +30,18 @@ export const handler = async (awsEvent: AWSEvent) => {
 
       if (!record.dynamodb?.NewImage) return undefined;
 
-      const res = AWS.DynamoDB.Converter.unmarshall(record.dynamodb.NewImage);
+      const newImage = AWS.DynamoDB.Converter.unmarshall(
+        record.dynamodb.NewImage
+      );
 
-      const eventClass = eventsRegistry[res.eventName];
-      if (!eventClass) return undefined;
+      if (!Object.keys(eventsRegistry).includes(newImage.eventName))
+        return undefined;
 
-      return new eventClass(res);
+      return newImage;
     })
     .filter((e) => e)
-    .sort((a, b) => a?.data?.timestamp - b?.data?.timestamp)
+    .sort((a, b) => a?.timestamp - b?.timestamp)
+    .map((record) => new eventsRegistry[record?.eventName](record?.data));
 
   for (const event of events) {
     console.log('PROJECT EVENT', event);
