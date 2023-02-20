@@ -6,6 +6,23 @@ import { Amplify, Auth } from 'aws-amplify';
 import App from './App';
 import './index.css';
 import Params from '../../backend/cdk-outputs.json';
+import { datadogRum } from '@datadog/browser-rum';
+
+datadogRum.init({
+  applicationId: 'd985f822-cfa9-465d-b7bb-630935586746',
+  clientToken: 'pub473080d50438d2d41d21532b24ca6963',
+  site: 'datadoghq.com',
+  service: 'demo',
+  env: 'dev',
+  version: '1.0.0',
+  sessionSampleRate: 100,
+  sessionReplaySampleRate: 100, // if not included, the default is 100
+  trackResources: true,
+  trackLongTasks: true,
+  trackUserInteractions: true,
+});
+
+datadogRum.startSessionReplayRecording();
 
 Amplify.configure({
   aws_appsync_region: Params.BackendStack.StackRegion,
@@ -32,7 +49,7 @@ Amplify.configure({
         Authorization: session.getIdToken().getJwtToken(),
       };
     },
-  }
+  },
 });
 
 Auth.configure();

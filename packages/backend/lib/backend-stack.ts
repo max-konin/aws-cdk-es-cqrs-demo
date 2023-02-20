@@ -15,6 +15,7 @@ import {
   UserPoolAuthenticationProvider,
 } from '@aws-cdk/aws-cognito-identitypool-alpha';
 import * as s3 from 'aws-cdk-lib/aws-s3';
+import { Datadog } from 'datadog-cdk-constructs-v2';
 
 export class BackendStack extends cdk.Stack {
   constructor(scope: Construct, id: string, props?: cdk.StackProps) {
@@ -243,5 +244,21 @@ export class BackendStack extends cdk.Stack {
       }`),
       responseMappingTemplate: MappingTemplate.dynamoDbResultList(),
     });
+
+    const datadog = new Datadog(this, 'Datadog', {
+      apiKey: '6ece7654-59b6-4408-a9a0-c526f510248c',
+      enableDatadogTracing: true,
+      enableMergeXrayTraces: true,
+      enableDatadogLogs: true,
+      injectLogContext: true,
+      logLevel: 'debug',
+      env: 'dev',
+      tags: 'project:demo',
+      site: 'datadoghq.com',
+    });
+    datadog.addLambdaFunctions([
+      accounts.mutationsResolver,
+      accounts.accountProjector,
+    ]);
   }
 }
