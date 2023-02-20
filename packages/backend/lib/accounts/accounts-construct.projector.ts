@@ -1,7 +1,8 @@
-import { projector } from './projectors/accounts';
 import * as AWS from 'aws-sdk';
-import { eventsRegistry } from '../events-registry';
 import { Record } from 'aws-sdk/clients/dynamodbstreams';
+import { eventsRegistry } from '../events-registry';
+import { projector } from './projectors/accounts';
+
 
 interface AWSEvent {
   Records: Record[];
@@ -13,7 +14,7 @@ export const handler = async (awsEvent: AWSEvent) => {
   if (!process.env.EVENTS_TABLE_NAME)
     throw new Error('Missing process.env.EVENTS_TABLE_NAME');
 
-  const { ACCOUNTS_TABLE_NAME, EVENTS_TABLE_NAME } = process.env;
+  const { ACCOUNTS_TABLE_NAME } = process.env;
 
   const ddbClient = new AWS.DynamoDB.DocumentClient();
   const accountsProjector = projector({
@@ -23,41 +24,26 @@ export const handler = async (awsEvent: AWSEvent) => {
 
   const items = awsEvent.Records || [];
 
-  // @ts-ignore
-  const events = await Promise.all(
-    items
-      .sort(
-        (a, b) =>
-          a.dynamodb?.NewImage?.timestamp?.N -
-          b.dynamodb?.NewImage?.timestamp?.N
-      )
-      .map(async (record) => {
-        if (record.eventName !== 'INSERT') return undefined;
+  const events = items
+    .map((record) => {
+      if (record.eventName !== 'INSERT') return undefined;
 
-        if (!record.dynamodb?.Keys) return undefined;
+      if (!record.dynamodb?.NewImage) return undefined;
 
-        // TODO: deserialize data from DDB stream
-        const res = await ddbClient
-          .query({
-            TableName: EVENTS_TABLE_NAME,
-            KeyConditionExpression: 'id = :id',
-            ExpressionAttributeValues: {
-              ':id': record.dynamodb?.Keys?.id?.S,
-            },
-          })
-          .promise();
+      const newImage = AWS.DynamoDB.Converter.unmarshall(
+        record.dynamodb.NewImage
+      );
 
-        if (!res.Items) return undefined;
+      if (!Object.keys(eventsRegistry).includes(newImage.eventName))
+        return undefined;
 
-        const item = res.Items[0];
-        // @ts-ignore
-        const eventClass = eventsRegistry[item.eventName];
-        if (!eventClass) return undefined;
-        return new eventClass(item.data) as Event;
-      })
-  );
+      return newImage;
+    })
+    .filter((e) => e)
+    .sort((a, b) => a?.timestamp - b?.timestamp)
+    .map((record) => new eventsRegistry[record?.eventName](record?.data));
 
-  for (const event of events.filter((e) => e)) {
+  for (const event of events) {
     console.log('PROJECT EVENT', event);
     await accountsProjector(event);
   }
