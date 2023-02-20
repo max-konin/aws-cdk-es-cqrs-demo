@@ -4,6 +4,11 @@ import { Command } from '../../framework/command';
 
 export const OpenAccountInput = z.object({
   accountId: z.string(),
+  issuer: z.object({
+    userId: z.string(),
+    userEmail: z.string(),
+    tenantId: z.string(),
+  }),
 });
 export type OpenAccountInputType = z.infer<typeof OpenAccountInput>;
 

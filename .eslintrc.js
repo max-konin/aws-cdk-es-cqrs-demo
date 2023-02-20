@@ -18,6 +18,11 @@ module.exports = {
   rules: {
     'prettier/prettier': 'error',
     'no-console': 'error',
+    "@typescript-eslint/no-misused-promises": [2, {
+      "checksVoidReturn": {
+        "attributes": false
+      }
+    }]
   },
   overrides: [
     {

@@ -10,6 +10,7 @@ specifiers:
   '@mui/icons-material': ^5.11.0
   '@mui/lab': 5.0.0-alpha.118
   '@mui/material': ^5.11.7
+  '@datadog/browser-rum': ^4.34.1
   '@types/react': ^18.0.26
   '@types/react-dom': ^18.0.9
   '@types/react-router': ^5.1.20
@@ -41,6 +42,7 @@ dependencies:
   '@mui/icons-material': 5.11.0_m3y2ykptchyoygtoroit6l3ehq
   '@mui/lab': 5.0.0-alpha.118_fmcb73g2fj7ijupodkeaypqkh4
   '@mui/material': 5.11.7_rqh7qj4464ntrqrt6banhaqg4q
+  '@datadog/browser-rum': 4.34.1
   aws-amplify: 5.0.11
   graphql: 16.6.0
   notistack: 2.0.8_qo5tbv3wjsnulj3odbgeoxieku
@@ -2721,6 +2723,28 @@ packages:
 
   /@emotion/weak-memoize/0.3.0:
     resolution: {integrity: sha512-AHPmaAx+RYfZz0eYu6Gviiagpmiyw98ySSlQvCUhVGDRtDFe4DBS0x1bSjdF3gqUDYOczB+yYvBTtEylYSdRhg==}
+    dev: false
+
+  /@datadog/browser-core/4.34.1:
+    resolution: {integrity: sha512-xZUMxSEUlzXVGU8fvIG5J4xGGBShrxgTTmCd9p7Ju/rUPnWV0hTqhPIXwSgbMvHgmX1vNwoNvydmlzhNVpKr3g==}
+    dev: false
+
+  /@datadog/browser-rum-core/4.34.1:
+    resolution: {integrity: sha512-s1nHAXREKRlTl2EOn+J/786D7pvQ2lg9MunhmC5Juh9DeNrYrmAooxbrXCaCy0gKRBHbm68HM4h59FXuA5iNGg==}
+    dependencies:
+      '@datadog/browser-core': 4.34.1
+    dev: false
+
+  /@datadog/browser-rum/4.34.1:
+    resolution: {integrity: sha512-fKw1EUwlPNliUJnOftsIgNGbW70+pZGwt2BbiUsWxp+CBHsw+MRFENUJybAK2l4PqNm+AZKVkvultiCDGvo3gg==}
+    peerDependencies:
+      '@datadog/browser-logs': 4.34.1
+    peerDependenciesMeta:
+      '@datadog/browser-logs':
+        optional: true
+    dependencies:
+      '@datadog/browser-core': 4.34.1
+      '@datadog/browser-rum-core': 4.34.1
     dev: false
 
   /@esbuild/android-arm/0.16.17:

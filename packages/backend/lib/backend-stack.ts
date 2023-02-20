@@ -1,15 +1,21 @@
 import * as cdk from 'aws-cdk-lib';
-import { SchemaFile } from 'aws-cdk-lib/aws-appsync';
 import {
   GraphqlApi,
   AuthorizationType,
   MappingTemplate,
+  SchemaFile,
 } from 'aws-cdk-lib/aws-appsync';
 import { Construct } from 'constructs';
 import { AccountsConstruct } from './accounts/accounts-construct';
 import { aws_dynamodb } from 'aws-cdk-lib';
 import { StreamViewType } from 'aws-cdk-lib/aws-dynamodb';
 import * as cognito from 'aws-cdk-lib/aws-cognito';
+import {
+  IdentityPool,
+  UserPoolAuthenticationProvider,
+} from '@aws-cdk/aws-cognito-identitypool-alpha';
+import * as s3 from 'aws-cdk-lib/aws-s3';
+import { Datadog } from 'datadog-cdk-constructs-v2';
 
 export class BackendStack extends cdk.Stack {
   constructor(scope: Construct, id: string, props?: cdk.StackProps) {
@@ -62,17 +68,17 @@ export class BackendStack extends cdk.Stack {
       website: true,
     };
 
-    const clientReadAttributes =
-      new cognito.ClientAttributes().withStandardAttributes(
-        standardCognitoAttributes
-      );
+    const clientReadAttributes = new cognito.ClientAttributes()
+      .withStandardAttributes(standardCognitoAttributes)
+      .withCustomAttributes('custom:tenantId');
 
-    const clientWriteAttributes =
-      new cognito.ClientAttributes().withStandardAttributes({
+    const clientWriteAttributes = new cognito.ClientAttributes()
+      .withStandardAttributes({
         ...standardCognitoAttributes,
         emailVerified: false,
         phoneNumberVerified: false,
-      });
+      })
+      .withCustomAttributes('custom:tenantId');
 
     // 👇 User Pool Client
     const userPoolClient = new cognito.UserPoolClient(this, 'userpool-client', {
@@ -89,6 +95,29 @@ export class BackendStack extends cdk.Stack {
       writeAttributes: clientWriteAttributes,
     });
 
+    const identityPool = new IdentityPool(this, 'tl-identity-pool', {
+      authenticationProviders: {
+        userPools: [new UserPoolAuthenticationProvider({ userPool })],
+      },
+    });
+
+    const documentsBucket = new s3.Bucket(this, 'tl-documents-bucket', {
+      blockPublicAccess: s3.BlockPublicAccess.BLOCK_ALL,
+      cors: [
+        {
+          allowedMethods: [
+            s3.HttpMethods.GET,
+            s3.HttpMethods.POST,
+            s3.HttpMethods.PUT,
+          ],
+          allowedOrigins: ['*'],
+          allowedHeaders: ['*'],
+        },
+      ],
+    });
+
+    documentsBucket.grantReadWrite(identityPool.authenticatedRole);
+
     const eventStore = new aws_dynamodb.Table(this, 'EventStore', {
       partitionKey: {
         name: 'id',
@@ -101,8 +130,12 @@ export class BackendStack extends cdk.Stack {
       stream: StreamViewType.NEW_AND_OLD_IMAGES,
     });
 
-    const accountsTable = new aws_dynamodb.Table(this, 'ReadStoreAccounts', {
+    const accountsTable = new aws_dynamodb.Table(this, 'ReadStoreAccountsV2', {
       partitionKey: {
+        name: 'tenantId',
+        type: aws_dynamodb.AttributeType.STRING,
+      },
+      sortKey: {
         name: 'id',
         type: aws_dynamodb.AttributeType.STRING,
       },
@@ -159,6 +192,14 @@ export class BackendStack extends cdk.Stack {
       value: userPoolClient.userPoolClientId,
     });
 
+    new cdk.CfnOutput(this, 'IdentityPoolId', {
+      value: identityPool.identityPoolId,
+    });
+
+    new cdk.CfnOutput(this, 'DocumentsBucket', {
+      value: documentsBucket.bucketName,
+    });
+
     const accountsMutationsDS = api.addLambdaDataSource(
       'accountsDS',
       accounts.mutationsResolver
@@ -188,8 +229,36 @@ export class BackendStack extends cdk.Stack {
     accountsDynamoDataSource.createResolver('getAllAccounts', {
       typeName: 'Query',
       fieldName: 'getAllAccounts',
-      requestMappingTemplate: MappingTemplate.dynamoDbScanTable(true),
+      requestMappingTemplate: MappingTemplate.fromString(`{
+        "version": "2017-02-28",
+        "operation": "Query",
+        "query": {
+          "expression": "#tenantId = :tenantId",
+          "expressionNames": {
+            "#tenantId": "tenantId"
+          },
+          "expressionValue": {
+            ":tenantId": $util.dynamodb.toDynamoDBJson($ctx.identity.claims.get("custom:tenantId"))
+          }
+        }
+      }`),
       responseMappingTemplate: MappingTemplate.dynamoDbResultList(),
     });
+
+    const datadog = new Datadog(this, 'Datadog', {
+      apiKey: '6ece7654-59b6-4408-a9a0-c526f510248c',
+      enableDatadogTracing: true,
+      enableMergeXrayTraces: true,
+      enableDatadogLogs: true,
+      injectLogContext: true,
+      logLevel: 'debug',
+      env: 'dev',
+      tags: 'project:demo',
+      site: 'datadoghq.com',
+    });
+    datadog.addLambdaFunctions([
+      accounts.mutationsResolver,
+      accounts.accountProjector,
+    ]);
   }
 }

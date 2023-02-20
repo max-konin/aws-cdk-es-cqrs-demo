@@ -3,6 +3,11 @@ import { Event } from '../../framework/event';
 
 interface AccountOpenedEventData {
   accountId: string;
+  issuer: {
+    userId: string;
+    userEmail: string;
+    tenantId: string;
+  };
 }
 
 export class AccountOpenedEvent extends Event<

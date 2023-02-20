@@ -19,12 +19,22 @@ input DebitAccountInput {
 
 type Mutation {
   openAccount(input: OpenAccountInput): Account
+  @aws_cognito_user_pools
+
   debitAccount(input: DebitAccountInput): Account
+  @aws_cognito_user_pools
+
   creditAccount(input: CreditAccountInput): Account
+  @aws_cognito_user_pools
 }
 
 type Query {
   getAllAccounts: [Account!]
+  # @auth(
+  #   rules: [
+  #     { allow: owner, ownerField: "tenantId", identityClaim: "custom:tenantId" }
+  #   ]
+  # )
 }
 
 type Subscription {
