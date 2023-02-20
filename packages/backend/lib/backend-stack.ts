@@ -12,6 +12,7 @@ import {
 import { initDocumentsBucket } from './initial/s3';
 import { initDynamoDb } from './initial/dynamodb';
 import { initGraphqlApi } from './initial/graphql';
+import { Datadog } from 'datadog-cdk-constructs-v2';
 
 export class BackendStack extends cdk.Stack {
   constructor(scope: Construct, id: string, props?: cdk.StackProps) {
@@ -107,8 +108,36 @@ export class BackendStack extends cdk.Stack {
     accountsDynamoDataSource.createResolver('getAllAccounts', {
       typeName: 'Query',
       fieldName: 'getAllAccounts',
-      requestMappingTemplate: MappingTemplate.dynamoDbScanTable(true),
+      requestMappingTemplate: MappingTemplate.fromString(`{
+        "version": "2017-02-28",
+        "operation": "Query",
+        "query": {
+          "expression": "#tenantId = :tenantId",
+          "expressionNames": {
+            "#tenantId": "tenantId"
+          },
+          "expressionValue": {
+            ":tenantId": $util.dynamodb.toDynamoDBJson($ctx.identity.claims.get("custom:tenantId"))
+          }
+        }
+      }`),
       responseMappingTemplate: MappingTemplate.dynamoDbResultList(),
     });
+
+    const datadog = new Datadog(this, 'Datadog', {
+      apiKey: '6ece7654-59b6-4408-a9a0-c526f510248c',
+      enableDatadogTracing: true,
+      enableMergeXrayTraces: true,
+      enableDatadogLogs: true,
+      injectLogContext: true,
+      logLevel: 'debug',
+      env: 'dev',
+      tags: 'project:demo',
+      site: 'datadoghq.com',
+    });
+    datadog.addLambdaFunctions([
+      accounts.mutationsResolver,
+      accounts.accountProjector,
+    ]);
   }
 }

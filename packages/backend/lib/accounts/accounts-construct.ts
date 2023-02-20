@@ -6,6 +6,7 @@ import { Runtime, StartingPosition } from 'aws-cdk-lib/aws-lambda';
 
 export class AccountsConstruct extends Construct {
   public mutationsResolver: NodejsFunction;
+  public accountProjector: NodejsFunction;
 
   constructor(
     scope: Construct,
@@ -22,7 +23,7 @@ export class AccountsConstruct extends Construct {
       runtime: Runtime.NODEJS_18_X,
     });
 
-    const accountProjector = new NodejsFunction(this, 'projector', {
+    this.accountProjector = new NodejsFunction(this, 'projector', {
       environment: {
         ACCOUNTS_TABLE_NAME: this.accountsTable.tableName,
         EVENTS_TABLE_NAME: this.eventStore.tableName,
@@ -30,10 +31,10 @@ export class AccountsConstruct extends Construct {
       runtime: Runtime.NODEJS_18_X,
     });
 
-    this.accountsTable.grantFullAccess(accountProjector);
+    this.accountsTable.grantFullAccess(this.accountProjector);
 
     this.eventStore.grantFullAccess(this.mutationsResolver);
-    this.eventStore.grantFullAccess(accountProjector); // TODO: DO NOT READ FROM EVENT STORE
+    this.eventStore.grantFullAccess(this.accountProjector); // TODO: DO NOT READ FROM EVENT STORE
 
     const sourceMapping = new DynamoEventSource(this.eventStore, {
       startingPosition: StartingPosition.TRIM_HORIZON,
@@ -42,6 +43,6 @@ export class AccountsConstruct extends Construct {
       retryAttempts: 10,
     });
 
-    sourceMapping.bind(accountProjector);
+    sourceMapping.bind(this.accountProjector);
   }
 }

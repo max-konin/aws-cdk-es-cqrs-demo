@@ -4,6 +4,7 @@ specifiers:
   '@apollo/client': ^3.7.5
   '@aws-amplify/api-graphql': ^3.0.11
   '@aws-amplify/ui-react': ^4.3.5
+  '@datadog/browser-rum': ^4.34.1
   '@types/react': ^18.0.26
   '@types/react-dom': ^18.0.9
   '@types/uuid': ^9.0.0
@@ -21,6 +22,7 @@ dependencies:
   '@apollo/client': 3.7.5_gdcq4dv6opitr3wbfwyjmanyra
   '@aws-amplify/api-graphql': 3.0.11
   '@aws-amplify/ui-react': 4.3.5_wsv775vt26sfhhhnsztrtkdyuq
+  '@datadog/browser-rum': 4.34.1
   aws-amplify: 5.0.11
   graphql: 16.6.0
   react: 18.2.0
@@ -2567,6 +2569,28 @@ packages:
       '@babel/helper-validator-identifier': 7.19.1
       to-fast-properties: 2.0.0
     dev: true
+
+  /@datadog/browser-core/4.34.1:
+    resolution: {integrity: sha512-xZUMxSEUlzXVGU8fvIG5J4xGGBShrxgTTmCd9p7Ju/rUPnWV0hTqhPIXwSgbMvHgmX1vNwoNvydmlzhNVpKr3g==}
+    dev: false
+
+  /@datadog/browser-rum-core/4.34.1:
+    resolution: {integrity: sha512-s1nHAXREKRlTl2EOn+J/786D7pvQ2lg9MunhmC5Juh9DeNrYrmAooxbrXCaCy0gKRBHbm68HM4h59FXuA5iNGg==}
+    dependencies:
+      '@datadog/browser-core': 4.34.1
+    dev: false
+
+  /@datadog/browser-rum/4.34.1:
+    resolution: {integrity: sha512-fKw1EUwlPNliUJnOftsIgNGbW70+pZGwt2BbiUsWxp+CBHsw+MRFENUJybAK2l4PqNm+AZKVkvultiCDGvo3gg==}
+    peerDependencies:
+      '@datadog/browser-logs': 4.34.1
+    peerDependenciesMeta:
+      '@datadog/browser-logs':
+        optional: true
+    dependencies:
+      '@datadog/browser-core': 4.34.1
+      '@datadog/browser-rum-core': 4.34.1
+    dev: false
 
   /@esbuild/android-arm/0.16.17:
     resolution: {integrity: sha512-N9x1CMXVhtWEAMS7pNNONyA14f71VPQN9Cnavj1XQh6T7bskqiLLrSca4O0Vr8Wdcga943eThxnVp3JLnBMYtw==}

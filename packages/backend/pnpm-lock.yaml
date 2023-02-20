@@ -14,6 +14,7 @@ specifiers:
   aws-cdk-lib: 2.61.1
   aws-sdk: ^2.1299.0
   constructs: ^10.0.0
+  datadog-cdk-constructs-v2: ^1.4.0
   jest: ^29.3.1
   source-map-support: ^0.5.21
   ts-jest: ^29.0.3
@@ -41,6 +42,7 @@ devDependencies:
   '@types/node': 18.11.18
   '@types/uuid': 9.0.0
   aws-cdk: 2.61.1
+  datadog-cdk-constructs-v2: 1.4.0_23bsmi3wqzqzm2wf6j2rnuizm4
   jest: 29.3.1_zfha7dvnw4nti6zkbsmhmn6xo4
   ts-jest: 29.0.5_p6ekqnroyms5nhqbfxosryz7rm
   ts-node: 10.9.1_awa2wsr5thmg3i7jqycphctjfq
@@ -1803,6 +1805,20 @@ packages:
       shebang-command: 2.0.0
       which: 2.0.2
     dev: true
+
+  /datadog-cdk-constructs-v2/1.4.0_23bsmi3wqzqzm2wf6j2rnuizm4:
+    resolution: {integrity: sha512-ke68DS76XKovGBxVfKAwMAskQ3D8xtH+FXbGQ0/4ul/5/84y7CF8AofrqsnhEWOprXXnQ3bMUDMNC3pqCU9FwQ==}
+    engines: {node: '>= 14.15.0'}
+    peerDependencies:
+      '@aws-cdk/aws-lambda-python-alpha': ^2.63.0-alpha.0
+      aws-cdk-lib: ^2.63.0
+      constructs: ^10.0.5
+    dependencies:
+      aws-cdk-lib: 2.61.1_constructs@10.1.225
+      constructs: 10.1.225
+    dev: true
+    bundledDependencies:
+      - loglevel
 
   /debug/4.3.4:
     resolution: {integrity: sha512-PRWFHuSU3eDtQJPvnNY7Jcket1j0t5OuOsFzPPzsekD52Zl8qUfFIPEiswXqIvHWGVHOgX+7G/vCNNhehwxfkQ==}
