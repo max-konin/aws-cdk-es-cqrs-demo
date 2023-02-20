@@ -2,7 +2,10 @@ import { Storage } from 'aws-amplify';
 import { useQuery } from 'react-query';
 
 const fetchFiles = () =>
-  Storage.list('').then((res) => res.results.map((f) => f.key));
+  // TODO get tenant from store
+  Storage.list('MYTENANT').then((res) =>
+    res.results.map((f) => f.key)
+  );
 
 function Files() {
   const { isLoading, data, error, isError } = useQuery('files', fetchFiles);
@@ -13,7 +16,13 @@ function Files() {
     if (!file) return;
 
     try {
-      await Storage.put(file.name, file);
+      // TODO get tenant from store
+      await Storage.put(`MYTENANT/${file.name}`, file, {
+        // level: 'public',
+        // customPrefix: {
+        //   public: 'MYTENANT/',
+        // },
+      });
     } catch (error) {
       console.log('Error uploading file: ', error);
     }

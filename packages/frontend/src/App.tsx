@@ -106,7 +106,7 @@ function App() {
         // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
         attributes: {
           ...formData.attributes,
-          'custom:tenantId': 'MY_TENANT',
+          'custom:tenantId': 'MYTENANT', // TODO get tenant id/name
         },
       });
     },

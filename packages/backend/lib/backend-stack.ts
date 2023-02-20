@@ -1,140 +1,36 @@
 import * as cdk from 'aws-cdk-lib';
-import { SchemaFile } from 'aws-cdk-lib/aws-appsync';
-import {
-  GraphqlApi,
-  AuthorizationType,
-  MappingTemplate,
-} from 'aws-cdk-lib/aws-appsync';
+import { MappingTemplate } from 'aws-cdk-lib/aws-appsync';
 import { Construct } from 'constructs';
 import { AccountsConstruct } from './accounts/accounts-construct';
-import { aws_dynamodb } from 'aws-cdk-lib';
-import { StreamViewType } from 'aws-cdk-lib/aws-dynamodb';
-import * as cognito from 'aws-cdk-lib/aws-cognito';
 import {
-  IdentityPool,
-  UserPoolAuthenticationProvider,
-} from '@aws-cdk/aws-cognito-identitypool-alpha';
-import * as s3 from 'aws-cdk-lib/aws-s3';
+  addPrincipalTags,
+  initAuthRole,
+  initIdentityPool,
+  initUserPool,
+  initUserPoolClient,
+} from './initial/cognito';
+import { initDocumentsBucket } from './initial/s3';
+import { initDynamoDb } from './initial/dynamodb';
+import { initGraphqlApi } from './initial/graphql';
 
 export class BackendStack extends cdk.Stack {
   constructor(scope: Construct, id: string, props?: cdk.StackProps) {
     super(scope, id, props);
 
-    const userPool = new cognito.UserPool(this, 'demo-userpool', {
-      userPoolName: 'demo-user-pool',
-      selfSignUpEnabled: true,
-      signInAliases: {
-        email: true,
-      },
-      autoVerify: {
-        email: true,
-      },
-      standardAttributes: {},
-      customAttributes: {
-        tenantId: new cognito.StringAttribute({ mutable: false }),
-      },
-      passwordPolicy: {
-        minLength: 6,
-        requireLowercase: true,
-        requireDigits: true,
-        requireUppercase: false,
-        requireSymbols: false,
-      },
-      accountRecovery: cognito.AccountRecovery.EMAIL_ONLY,
-      removalPolicy: cdk.RemovalPolicy.RETAIN,
-    });
+    const userPool = initUserPool(this);
+    const userPoolClient = initUserPoolClient(this, userPool);
+    const identityPool = initIdentityPool(this, userPoolClient, userPool);
+    const documentsBucket = initDocumentsBucket(this);
 
-    // 👇 User Pool Client attributes
-    const standardCognitoAttributes = {
-      givenName: true,
-      familyName: true,
-      email: true,
-      emailVerified: true,
-      address: true,
-      birthdate: true,
-      gender: true,
-      locale: true,
-      middleName: true,
-      fullname: true,
-      nickname: true,
-      phoneNumber: true,
-      phoneNumberVerified: true,
-      profilePicture: true,
-      preferredUsername: true,
-      profilePage: true,
-      timezone: true,
-      lastUpdateTime: true,
-      website: true,
-    };
+    initAuthRole(this, documentsBucket.bucketName, identityPool.ref);
+    addPrincipalTags(
+      this,
+      documentsBucket.bucketName,
+      identityPool.ref,
+      userPool.userPoolProviderName
+    );
 
-    const clientReadAttributes =
-      new cognito.ClientAttributes().withStandardAttributes(
-        standardCognitoAttributes
-      );
-
-    const clientWriteAttributes =
-      new cognito.ClientAttributes().withStandardAttributes({
-        ...standardCognitoAttributes,
-        emailVerified: false,
-        phoneNumberVerified: false,
-      });
-
-    // 👇 User Pool Client
-    const userPoolClient = new cognito.UserPoolClient(this, 'userpool-client', {
-      userPool,
-      authFlows: {
-        userPassword: true,
-        custom: true,
-        userSrp: true,
-      },
-      supportedIdentityProviders: [
-        cognito.UserPoolClientIdentityProvider.COGNITO,
-      ],
-      readAttributes: clientReadAttributes,
-      writeAttributes: clientWriteAttributes,
-    });
-
-    const identityPool = new IdentityPool(this, 'tl-identity-pool', {
-      authenticationProviders: {
-        userPools: [new UserPoolAuthenticationProvider({ userPool })],
-      },
-    });
-
-    const documentsBucket = new s3.Bucket(this, 'tl-documents-bucket', {
-      blockPublicAccess: s3.BlockPublicAccess.BLOCK_ALL,
-      cors: [
-        {
-          allowedMethods: [
-            s3.HttpMethods.GET,
-            s3.HttpMethods.POST,
-            s3.HttpMethods.PUT,
-          ],
-          allowedOrigins: ['*'],
-          allowedHeaders: ['*'],
-        },
-      ],
-    });
-
-    documentsBucket.grantReadWrite(identityPool.authenticatedRole);
-
-    const eventStore = new aws_dynamodb.Table(this, 'EventStore', {
-      partitionKey: {
-        name: 'id',
-        type: aws_dynamodb.AttributeType.STRING,
-      },
-      sortKey: {
-        name: 'timestamp',
-        type: aws_dynamodb.AttributeType.NUMBER,
-      },
-      stream: StreamViewType.NEW_AND_OLD_IMAGES,
-    });
-
-    const accountsTable = new aws_dynamodb.Table(this, 'ReadStoreAccounts', {
-      partitionKey: {
-        name: 'id',
-        type: aws_dynamodb.AttributeType.STRING,
-      },
-    });
+    const { eventStore, accountsTable } = initDynamoDb(this);
 
     const accounts = new AccountsConstruct(
       this,
@@ -143,20 +39,7 @@ export class BackendStack extends cdk.Stack {
       accountsTable
     );
 
-    // Creates the AppSync API
-    const api = new GraphqlApi(this, 'Api', {
-      name: 'cqrs-demo-api',
-      schema: SchemaFile.fromAsset('graphql/schema.graphql'),
-      authorizationConfig: {
-        defaultAuthorization: {
-          authorizationType: AuthorizationType.USER_POOL,
-          userPoolConfig: {
-            userPool: userPool,
-          },
-        },
-      },
-      xrayEnabled: true,
-    });
+    const api = initGraphqlApi(this, userPool);
 
     // Prints out the AppSync GraphQL endpoint to the terminal
     new cdk.CfnOutput(this, 'GraphQLAPIURL', {
@@ -188,7 +71,7 @@ export class BackendStack extends cdk.Stack {
     });
 
     new cdk.CfnOutput(this, 'IdentityPoolId', {
-      value: identityPool.identityPoolId,
+      value: identityPool.ref,
     });
 
     new cdk.CfnOutput(this, 'DocumentsBucket', {

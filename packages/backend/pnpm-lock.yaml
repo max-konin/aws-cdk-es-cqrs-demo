@@ -56,14 +56,14 @@ packages:
       '@jridgewell/trace-mapping': 0.3.17
     dev: true
 
-  /@aws-cdk/asset-awscli-v1/2.2.49:
-    resolution: {integrity: sha512-Qd5bdLlC/sphWQQPNn7etKXWCh+fij7DWxtkIwvhhZ+LM6UEApGLS8sBLBQcRO2ZQdEuNb+zeClUy+3DNojfeg==}
+  /@aws-cdk/asset-awscli-v1/2.2.69:
+    resolution: {integrity: sha512-sKhINBDXKc9cad+4ghBsn6nB63ci7KcO7Vb2FswBI36Z7lkaIkz51pPwmVWn8AsYNOvCpcaCxUx0zngCbQOluQ==}
 
   /@aws-cdk/asset-kubectl-v20/2.1.1:
     resolution: {integrity: sha512-U1ntiX8XiMRRRH5J1IdC+1t5CE89015cwyt5U63Cpk0GnMlN5+h9WsWMlKlPXZR4rdq/m806JRlBMRpBUB2Dhw==}
 
-  /@aws-cdk/asset-node-proxy-agent-v5/2.0.38:
-    resolution: {integrity: sha512-BBwAjORhuUkTGO3CxGS5Evcp5n20h9v06Sftn2R1DuSm8zIoUlPsNlI1HUk8XqYuoEI4aD7IKRQBLglv09ciJQ==}
+  /@aws-cdk/asset-node-proxy-agent-v5/2.0.58:
+    resolution: {integrity: sha512-7BTzPo1tBw1tTYEmWNO0nS+bTJ/Ikg2qpFQZBb0GedEJ1v713IyRoySlKADAXAaMPJU9Gg05LCuJy+cs7RUDMQ==}
 
   /@aws-cdk/assets/1.189.0_ch2i3vw5nnnv7wlcn5zqlijb4i:
     resolution: {integrity: sha512-yi9OCIbE6TsgJDGIX+wiCHnwucguvWDon14aTkRaeLHN/ICo+MCjAgzjxWuuxk0xSDQ2Q3/0oSZ6au2ZUhXw7A==}
@@ -94,7 +94,7 @@ packages:
       constructs: ^3.3.69
     dependencies:
       '@aws-cdk/aws-certificatemanager': 1.189.0_d2eejzocg4ehzjxijmbnkt6cc4
-      '@aws-cdk/aws-cloudwatch': 1.189.0_2xmez3dwvuc3q4rbjxy5eujvru
+      '@aws-cdk/aws-cloudwatch': 1.189.0_constructs@10.1.225
       '@aws-cdk/aws-cognito': 1.189.0_d2eejzocg4ehzjxijmbnkt6cc4
       '@aws-cdk/aws-ec2': 1.189.0_constructs@10.1.225
       '@aws-cdk/aws-elasticloadbalancingv2': 1.189.0_kbchokyma742velh7d23whehci
@@ -116,7 +116,7 @@ packages:
       constructs: ^3.3.69
     dependencies:
       '@aws-cdk/aws-autoscaling-common': 1.189.0_2xmez3dwvuc3q4rbjxy5eujvru
-      '@aws-cdk/aws-cloudwatch': 1.189.0_2xmez3dwvuc3q4rbjxy5eujvru
+      '@aws-cdk/aws-cloudwatch': 1.189.0_constructs@10.1.225
       '@aws-cdk/aws-iam': 1.189.0_constructs@10.1.225
       '@aws-cdk/core': 1.189.0_constructs@10.1.225
       constructs: 10.1.225
@@ -164,7 +164,7 @@ packages:
       constructs: ^3.3.69
     dependencies:
       '@aws-cdk/aws-acmpca': 1.189.0_ch2i3vw5nnnv7wlcn5zqlijb4i
-      '@aws-cdk/aws-cloudwatch': 1.189.0_2xmez3dwvuc3q4rbjxy5eujvru
+      '@aws-cdk/aws-cloudwatch': 1.189.0_constructs@10.1.225
       '@aws-cdk/aws-iam': 1.189.0_constructs@10.1.225
       '@aws-cdk/aws-lambda': 1.189.0_constructs@10.1.225
       '@aws-cdk/aws-route53': 1.189.0_r5gic6wmydkp47odpvefvr6adu
@@ -190,12 +190,10 @@ packages:
       '@aws-cdk/cx-api': 1.189.0
       constructs: 10.1.225
 
-  /@aws-cdk/aws-cloudwatch/1.189.0_2xmez3dwvuc3q4rbjxy5eujvru:
+  /@aws-cdk/aws-cloudwatch/1.189.0_constructs@10.1.225:
     resolution: {integrity: sha512-rjNHCJfVpaOtgotmrpThbU69n42MuEGLsuU11A+DeSrLeRh0bm0cZSZGQJKUrtnMghdzMDwTi0iBjykKvJF/ow==}
     engines: {node: '>= 14.15.0'}
     peerDependencies:
-      '@aws-cdk/aws-iam': 1.189.0
-      '@aws-cdk/core': 1.189.0
       constructs: ^3.3.69
     dependencies:
       '@aws-cdk/aws-iam': 1.189.0_constructs@10.1.225
@@ -242,7 +240,7 @@ packages:
     dependencies:
       '@aws-cdk/aws-certificatemanager': 1.189.0_d2eejzocg4ehzjxijmbnkt6cc4
       '@aws-cdk/aws-iam': 1.189.0_constructs@10.1.225
-      '@aws-cdk/aws-kms': 1.189.0_2xmez3dwvuc3q4rbjxy5eujvru
+      '@aws-cdk/aws-kms': 1.189.0_constructs@10.1.225
       '@aws-cdk/aws-lambda': 1.189.0_constructs@10.1.225
       '@aws-cdk/core': 1.189.0_constructs@10.1.225
       '@aws-cdk/custom-resources': 1.189.0_kbchokyma742velh7d23whehci
@@ -261,10 +259,10 @@ packages:
       constructs: ^3.3.69
     dependencies:
       '@aws-cdk/aws-applicationautoscaling': 1.189.0_constructs@10.1.225
-      '@aws-cdk/aws-cloudwatch': 1.189.0_2xmez3dwvuc3q4rbjxy5eujvru
+      '@aws-cdk/aws-cloudwatch': 1.189.0_constructs@10.1.225
       '@aws-cdk/aws-iam': 1.189.0_constructs@10.1.225
       '@aws-cdk/aws-kinesis': 1.189.0_constructs@10.1.225
-      '@aws-cdk/aws-kms': 1.189.0_2xmez3dwvuc3q4rbjxy5eujvru
+      '@aws-cdk/aws-kms': 1.189.0_constructs@10.1.225
       '@aws-cdk/aws-lambda': 1.189.0_constructs@10.1.225
       '@aws-cdk/core': 1.189.0_constructs@10.1.225
       '@aws-cdk/custom-resources': 1.189.0_kbchokyma742velh7d23whehci
@@ -276,9 +274,9 @@ packages:
     peerDependencies:
       constructs: ^3.3.69
     dependencies:
-      '@aws-cdk/aws-cloudwatch': 1.189.0_2xmez3dwvuc3q4rbjxy5eujvru
+      '@aws-cdk/aws-cloudwatch': 1.189.0_constructs@10.1.225
       '@aws-cdk/aws-iam': 1.189.0_constructs@10.1.225
-      '@aws-cdk/aws-kms': 1.189.0_2xmez3dwvuc3q4rbjxy5eujvru
+      '@aws-cdk/aws-kms': 1.189.0_constructs@10.1.225
       '@aws-cdk/aws-logs': 1.189.0_constructs@10.1.225
       '@aws-cdk/aws-s3': 1.189.0_constructs@10.1.225
       '@aws-cdk/aws-s3-assets': 1.189.0_constructs@10.1.225
@@ -311,7 +309,7 @@ packages:
     dependencies:
       '@aws-cdk/aws-events': 1.189.0_constructs@10.1.225
       '@aws-cdk/aws-iam': 1.189.0_constructs@10.1.225
-      '@aws-cdk/aws-kms': 1.189.0_2xmez3dwvuc3q4rbjxy5eujvru
+      '@aws-cdk/aws-kms': 1.189.0_constructs@10.1.225
       '@aws-cdk/core': 1.189.0_constructs@10.1.225
       constructs: 10.1.225
 
@@ -323,7 +321,7 @@ packages:
     dependencies:
       '@aws-cdk/aws-ec2': 1.189.0_constructs@10.1.225
       '@aws-cdk/aws-iam': 1.189.0_constructs@10.1.225
-      '@aws-cdk/aws-kms': 1.189.0_2xmez3dwvuc3q4rbjxy5eujvru
+      '@aws-cdk/aws-kms': 1.189.0_constructs@10.1.225
       '@aws-cdk/cloud-assembly-schema': 1.189.0
       '@aws-cdk/core': 1.189.0_constructs@10.1.225
       '@aws-cdk/cx-api': 1.189.0
@@ -337,7 +335,7 @@ packages:
       constructs: ^3.3.69
     dependencies:
       '@aws-cdk/aws-certificatemanager': 1.189.0_d2eejzocg4ehzjxijmbnkt6cc4
-      '@aws-cdk/aws-cloudwatch': 1.189.0_2xmez3dwvuc3q4rbjxy5eujvru
+      '@aws-cdk/aws-cloudwatch': 1.189.0_constructs@10.1.225
       '@aws-cdk/aws-ec2': 1.189.0_constructs@10.1.225
       '@aws-cdk/aws-iam': 1.189.0_constructs@10.1.225
       '@aws-cdk/aws-lambda': 1.189.0_constructs@10.1.225
@@ -357,10 +355,10 @@ packages:
       constructs: ^3.3.69
     dependencies:
       '@aws-cdk/aws-certificatemanager': 1.189.0_d2eejzocg4ehzjxijmbnkt6cc4
-      '@aws-cdk/aws-cloudwatch': 1.189.0_2xmez3dwvuc3q4rbjxy5eujvru
+      '@aws-cdk/aws-cloudwatch': 1.189.0_constructs@10.1.225
       '@aws-cdk/aws-ec2': 1.189.0_constructs@10.1.225
       '@aws-cdk/aws-iam': 1.189.0_constructs@10.1.225
-      '@aws-cdk/aws-kms': 1.189.0_2xmez3dwvuc3q4rbjxy5eujvru
+      '@aws-cdk/aws-kms': 1.189.0_constructs@10.1.225
       '@aws-cdk/aws-logs': 1.189.0_constructs@10.1.225
       '@aws-cdk/aws-route53': 1.189.0_r5gic6wmydkp47odpvefvr6adu
       '@aws-cdk/aws-secretsmanager': 1.189.0_kbchokyma742velh7d23whehci
@@ -398,19 +396,17 @@ packages:
     peerDependencies:
       constructs: ^3.3.69
     dependencies:
-      '@aws-cdk/aws-cloudwatch': 1.189.0_2xmez3dwvuc3q4rbjxy5eujvru
+      '@aws-cdk/aws-cloudwatch': 1.189.0_constructs@10.1.225
       '@aws-cdk/aws-iam': 1.189.0_constructs@10.1.225
-      '@aws-cdk/aws-kms': 1.189.0_2xmez3dwvuc3q4rbjxy5eujvru
+      '@aws-cdk/aws-kms': 1.189.0_constructs@10.1.225
       '@aws-cdk/aws-logs': 1.189.0_constructs@10.1.225
       '@aws-cdk/core': 1.189.0_constructs@10.1.225
       constructs: 10.1.225
 
-  /@aws-cdk/aws-kms/1.189.0_2xmez3dwvuc3q4rbjxy5eujvru:
+  /@aws-cdk/aws-kms/1.189.0_constructs@10.1.225:
     resolution: {integrity: sha512-ZzxN/tvOc37CXHcM8AWD7PLtHK3Xb8VA/C8haKE4dA9iectvSAWud6skhXGWbgN/GhTi5Ew3oq9vO+8WusynoA==}
     engines: {node: '>= 14.15.0'}
     peerDependencies:
-      '@aws-cdk/aws-iam': 1.189.0
-      '@aws-cdk/core': 1.189.0
       constructs: ^3.3.69
     dependencies:
       '@aws-cdk/aws-iam': 1.189.0_constructs@10.1.225
@@ -426,7 +422,7 @@ packages:
       constructs: ^3.3.69
     dependencies:
       '@aws-cdk/aws-applicationautoscaling': 1.189.0_constructs@10.1.225
-      '@aws-cdk/aws-cloudwatch': 1.189.0_2xmez3dwvuc3q4rbjxy5eujvru
+      '@aws-cdk/aws-cloudwatch': 1.189.0_constructs@10.1.225
       '@aws-cdk/aws-codeguruprofiler': 1.189.0_constructs@10.1.225
       '@aws-cdk/aws-ec2': 1.189.0_constructs@10.1.225
       '@aws-cdk/aws-ecr': 1.189.0_constructs@10.1.225
@@ -434,7 +430,7 @@ packages:
       '@aws-cdk/aws-efs': 1.189.0_constructs@10.1.225
       '@aws-cdk/aws-events': 1.189.0_constructs@10.1.225
       '@aws-cdk/aws-iam': 1.189.0_constructs@10.1.225
-      '@aws-cdk/aws-kms': 1.189.0_2xmez3dwvuc3q4rbjxy5eujvru
+      '@aws-cdk/aws-kms': 1.189.0_constructs@10.1.225
       '@aws-cdk/aws-logs': 1.189.0_constructs@10.1.225
       '@aws-cdk/aws-s3': 1.189.0_constructs@10.1.225
       '@aws-cdk/aws-s3-assets': 1.189.0_constructs@10.1.225
@@ -452,9 +448,9 @@ packages:
     peerDependencies:
       constructs: ^3.3.69
     dependencies:
-      '@aws-cdk/aws-cloudwatch': 1.189.0_2xmez3dwvuc3q4rbjxy5eujvru
+      '@aws-cdk/aws-cloudwatch': 1.189.0_constructs@10.1.225
       '@aws-cdk/aws-iam': 1.189.0_constructs@10.1.225
-      '@aws-cdk/aws-kms': 1.189.0_2xmez3dwvuc3q4rbjxy5eujvru
+      '@aws-cdk/aws-kms': 1.189.0_constructs@10.1.225
       '@aws-cdk/aws-s3-assets': 1.189.0_constructs@10.1.225
       '@aws-cdk/core': 1.189.0_constructs@10.1.225
       '@aws-cdk/cx-api': 1.189.0
@@ -467,10 +463,10 @@ packages:
       constructs: ^3.3.69
     dependencies:
       '@aws-cdk/aws-certificatemanager': 1.189.0_d2eejzocg4ehzjxijmbnkt6cc4
-      '@aws-cdk/aws-cloudwatch': 1.189.0_2xmez3dwvuc3q4rbjxy5eujvru
+      '@aws-cdk/aws-cloudwatch': 1.189.0_constructs@10.1.225
       '@aws-cdk/aws-ec2': 1.189.0_constructs@10.1.225
       '@aws-cdk/aws-iam': 1.189.0_constructs@10.1.225
-      '@aws-cdk/aws-kms': 1.189.0_2xmez3dwvuc3q4rbjxy5eujvru
+      '@aws-cdk/aws-kms': 1.189.0_constructs@10.1.225
       '@aws-cdk/aws-logs': 1.189.0_constructs@10.1.225
       '@aws-cdk/aws-route53': 1.189.0_r5gic6wmydkp47odpvefvr6adu
       '@aws-cdk/aws-secretsmanager': 1.189.0_kbchokyma742velh7d23whehci
@@ -487,11 +483,11 @@ packages:
     peerDependencies:
       constructs: ^3.3.69
     dependencies:
-      '@aws-cdk/aws-cloudwatch': 1.189.0_2xmez3dwvuc3q4rbjxy5eujvru
+      '@aws-cdk/aws-cloudwatch': 1.189.0_constructs@10.1.225
       '@aws-cdk/aws-ec2': 1.189.0_constructs@10.1.225
       '@aws-cdk/aws-events': 1.189.0_constructs@10.1.225
       '@aws-cdk/aws-iam': 1.189.0_constructs@10.1.225
-      '@aws-cdk/aws-kms': 1.189.0_2xmez3dwvuc3q4rbjxy5eujvru
+      '@aws-cdk/aws-kms': 1.189.0_constructs@10.1.225
       '@aws-cdk/aws-logs': 1.189.0_constructs@10.1.225
       '@aws-cdk/aws-s3': 1.189.0_constructs@10.1.225
       '@aws-cdk/aws-secretsmanager': 1.189.0_kbchokyma742velh7d23whehci
@@ -529,7 +525,7 @@ packages:
     dependencies:
       '@aws-cdk/assets': 1.189.0_ch2i3vw5nnnv7wlcn5zqlijb4i
       '@aws-cdk/aws-iam': 1.189.0_constructs@10.1.225
-      '@aws-cdk/aws-kms': 1.189.0_2xmez3dwvuc3q4rbjxy5eujvru
+      '@aws-cdk/aws-kms': 1.189.0_constructs@10.1.225
       '@aws-cdk/aws-s3': 1.189.0_constructs@10.1.225
       '@aws-cdk/core': 1.189.0_constructs@10.1.225
       '@aws-cdk/cx-api': 1.189.0
@@ -543,7 +539,7 @@ packages:
     dependencies:
       '@aws-cdk/aws-events': 1.189.0_constructs@10.1.225
       '@aws-cdk/aws-iam': 1.189.0_constructs@10.1.225
-      '@aws-cdk/aws-kms': 1.189.0_2xmez3dwvuc3q4rbjxy5eujvru
+      '@aws-cdk/aws-kms': 1.189.0_constructs@10.1.225
       '@aws-cdk/core': 1.189.0_constructs@10.1.225
       '@aws-cdk/cx-api': 1.189.0
       constructs: 10.1.225
@@ -568,7 +564,7 @@ packages:
     dependencies:
       '@aws-cdk/aws-ec2': 1.189.0_constructs@10.1.225
       '@aws-cdk/aws-iam': 1.189.0_constructs@10.1.225
-      '@aws-cdk/aws-kms': 1.189.0_2xmez3dwvuc3q4rbjxy5eujvru
+      '@aws-cdk/aws-kms': 1.189.0_constructs@10.1.225
       '@aws-cdk/aws-lambda': 1.189.0_constructs@10.1.225
       '@aws-cdk/aws-sam': 1.189.0_ch2i3vw5nnnv7wlcn5zqlijb4i
       '@aws-cdk/core': 1.189.0_constructs@10.1.225
@@ -591,11 +587,11 @@ packages:
     peerDependencies:
       constructs: ^3.3.69
     dependencies:
-      '@aws-cdk/aws-cloudwatch': 1.189.0_2xmez3dwvuc3q4rbjxy5eujvru
+      '@aws-cdk/aws-cloudwatch': 1.189.0_constructs@10.1.225
       '@aws-cdk/aws-codestarnotifications': 1.189.0_ch2i3vw5nnnv7wlcn5zqlijb4i
       '@aws-cdk/aws-events': 1.189.0_constructs@10.1.225
       '@aws-cdk/aws-iam': 1.189.0_constructs@10.1.225
-      '@aws-cdk/aws-kms': 1.189.0_2xmez3dwvuc3q4rbjxy5eujvru
+      '@aws-cdk/aws-kms': 1.189.0_constructs@10.1.225
       '@aws-cdk/aws-sqs': 1.189.0_constructs@10.1.225
       '@aws-cdk/core': 1.189.0_constructs@10.1.225
       constructs: 10.1.225
@@ -606,9 +602,9 @@ packages:
     peerDependencies:
       constructs: ^3.3.69
     dependencies:
-      '@aws-cdk/aws-cloudwatch': 1.189.0_2xmez3dwvuc3q4rbjxy5eujvru
+      '@aws-cdk/aws-cloudwatch': 1.189.0_constructs@10.1.225
       '@aws-cdk/aws-iam': 1.189.0_constructs@10.1.225
-      '@aws-cdk/aws-kms': 1.189.0_2xmez3dwvuc3q4rbjxy5eujvru
+      '@aws-cdk/aws-kms': 1.189.0_constructs@10.1.225
       '@aws-cdk/core': 1.189.0_constructs@10.1.225
       constructs: 10.1.225
 
@@ -621,7 +617,7 @@ packages:
       constructs: ^3.3.69
     dependencies:
       '@aws-cdk/aws-iam': 1.189.0_constructs@10.1.225
-      '@aws-cdk/aws-kms': 1.189.0_2xmez3dwvuc3q4rbjxy5eujvru
+      '@aws-cdk/aws-kms': 1.189.0_constructs@10.1.225
       '@aws-cdk/cloud-assembly-schema': 1.189.0
       '@aws-cdk/core': 1.189.0_constructs@10.1.225
       constructs: 10.1.225
@@ -632,7 +628,7 @@ packages:
     peerDependencies:
       constructs: ^3.3.69
     dependencies:
-      '@aws-cdk/aws-cloudwatch': 1.189.0_2xmez3dwvuc3q4rbjxy5eujvru
+      '@aws-cdk/aws-cloudwatch': 1.189.0_constructs@10.1.225
       '@aws-cdk/aws-events': 1.189.0_constructs@10.1.225
       '@aws-cdk/aws-iam': 1.189.0_constructs@10.1.225
       '@aws-cdk/aws-logs': 1.189.0_constructs@10.1.225
@@ -660,11 +656,7 @@ packages:
       '@aws-cdk/cloud-assembly-schema': 1.189.0
       '@aws-cdk/cx-api': 1.189.0
       '@aws-cdk/region-info': 1.189.0
-      '@balena/dockerignore': 1.0.2
       constructs: 10.1.225
-      fs-extra: 9.1.0
-      ignore: 5.2.4
-      minimatch: 3.1.2
     bundledDependencies:
       - fs-extra
       - minimatch
@@ -1513,9 +1505,9 @@ packages:
     peerDependencies:
       constructs: ^10.0.0
     dependencies:
-      '@aws-cdk/asset-awscli-v1': 2.2.49
+      '@aws-cdk/asset-awscli-v1': 2.2.69
       '@aws-cdk/asset-kubectl-v20': 2.1.1
-      '@aws-cdk/asset-node-proxy-agent-v5': 2.0.38
+      '@aws-cdk/asset-node-proxy-agent-v5': 2.0.58
       '@balena/dockerignore': 1.0.2
       case: 1.6.3
       constructs: 10.1.225
