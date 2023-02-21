@@ -9,6 +9,7 @@ import { createTheme, ThemeProvider } from '@mui/material/styles';
 import '@aws-amplify/ui-react/styles.css';
 import AppAuthenticator from './components/auth/AppAuthenticator';
 import { datadogRum } from '@datadog/browser-rum';
+import ErrorBoundary from './providers/ErrorBoundary/ErrorBoundary';
 
 datadogRum.init({
   applicationId: 'd985f822-cfa9-465d-b7bb-630935586746',
@@ -63,12 +64,14 @@ Auth.configure();
 
 createRoot(document.getElementById('root') as HTMLElement).render(
   <AppAuthenticator>
-    <ThemeProvider theme={theme}>
-      <SnackbarProvider maxSnack={3}>
-        <BrowserRouter>
-          <App />
-        </BrowserRouter>
-      </SnackbarProvider>
-    </ThemeProvider>
+    <ErrorBoundary>
+      <ThemeProvider theme={theme}>
+        <SnackbarProvider maxSnack={3}>
+          <BrowserRouter>
+            <App />
+          </BrowserRouter>
+        </SnackbarProvider>
+      </ThemeProvider>
+    </ErrorBoundary>
   </AppAuthenticator>
 );
