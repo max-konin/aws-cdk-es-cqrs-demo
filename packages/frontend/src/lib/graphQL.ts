@@ -5,7 +5,7 @@ import {
   UseQueryOptions,
   QueryKey,
 } from 'react-query';
-import { amplifyFetcher } from './api';
+import { amplifyFetcher, amplifySubscriber } from './api';
 
 export const useGraphQLMutaion = <
   TData,
@@ -33,3 +33,9 @@ export const useGraphQLQuery = <TData, TVariables = {}>(
     amplifyFetcher<TData, TVariables>(query, variables),
     options
   );
+
+export const useGraphQLSubscription = <TData = {}, TVariables = {}>(
+  query: string,
+  observer: ZenObservable.Observer<TData>,
+  variables?: TVariables
+) => amplifySubscriber<TData, TVariables>(query, observer, variables)();

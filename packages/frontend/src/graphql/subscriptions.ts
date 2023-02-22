@@ -10,6 +10,14 @@ export const openedAccount = /* GraphQL */ `
     }
   }
 `;
+
+export type OpenedAccountData = {
+  openedAccount: {
+    balance: number;
+    id: string;
+  };
+};
+
 export const updatedAccount = /* GraphQL */ `
   subscription UpdatedAccount($id: ID!) {
     updatedAccount(id: $id) {
@@ -18,3 +26,7 @@ export const updatedAccount = /* GraphQL */ `
     }
   }
 `;
+
+export type UpdatedAccountVariables = {
+  id: string;
+};

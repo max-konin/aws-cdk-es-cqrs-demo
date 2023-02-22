@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import '@aws-amplify/ui-react/styles.css';
 import {
   Button,
@@ -21,22 +21,58 @@ import {
 } from '../graphql/mutations';
 import { getAllAccounts, GetAllAccountsData } from '../graphql/queries';
 import { Account, CreditAccountMutation } from '../API';
-import { useGraphQLMutaion, useGraphQLQuery } from '../lib/graphQL';
+import {
+  useGraphQLMutaion,
+  useGraphQLQuery,
+  useGraphQLSubscription,
+} from '../lib/graphQL';
 import { v4 } from 'uuid';
 import { useQueryClient } from 'react-query';
+import {
+  openedAccount,
+  updatedAccount,
+  UpdatedAccountVariables,
+} from '../graphql/subscriptions';
+
+type Subscription = ZenObservable.Subscription;
 
 function Dashboard() {
   const queryClient = useQueryClient();
+
+  const [subscriptions, setSubscriptions] = useState<Subscription[]>([]);
+
+  useGraphQLSubscription(openedAccount, {
+    next: () => queryClient.invalidateQueries(['getAllAccounts']),
+  });
+
   const { data } = useGraphQLQuery<GetAllAccountsData>(
     ['getAllAccounts'],
-    getAllAccounts
+    getAllAccounts,
+    undefined,
+    {
+      onSuccess: ({ getAllAccounts }) => {
+        subscriptions.forEach((s) => s.unsubscribe());
+        setSubscriptions(
+          getAllAccounts
+            .map((a) =>
+              useGraphQLSubscription<{}, UpdatedAccountVariables>(
+                updatedAccount,
+                {
+                  next: () => queryClient.invalidateQueries(['getAllAccounts']),
+                },
+                { id: a.id }
+              )
+            )
+            .filter((s): s is Subscription => !!s)
+        );
+      },
+    }
   );
+
   const { mutateAsync } = useGraphQLMutaion<
     OpenAccountData,
     OpenAccountVariables
-  >(openAccount, {
-    onSuccess: () => queryClient.invalidateQueries(['getAllAccounts']),
-  });
+  >(openAccount);
 
   return (
     <div>
@@ -86,21 +122,16 @@ function AccountsTable(props: { accounts: Account[] }) {
 function AccountPanel(props: { accounts: Account[] }) {
   const [currentId, setCurrentId] = useState<string>(props.accounts[0]?.id);
   const [amount, setAmount] = useState(100);
-  const queryClient = useQueryClient();
 
   const { mutateAsync: creditMutation } = useGraphQLMutaion<
     CreditAccountMutation,
     UpdateAccountVariables
-  >(creditAccount, {
-    onSuccess: () => queryClient.invalidateQueries(['getAllAccounts']), // somtimes load old data
-  });
+  >(creditAccount);
 
   const { mutateAsync: debitMutation } = useGraphQLMutaion<
     DebitAccountData,
     UpdateAccountVariables
-  >(debitAccount, {
-    onSuccess: () => queryClient.invalidateQueries(['getAllAccounts']),
-  });
+  >(debitAccount);
 
   const creditAccountAction = async () => {
     if (!currentId || !amount) return;
