@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import '@aws-amplify/ui-react/styles.css';
 import {
   Button,
@@ -24,6 +24,8 @@ import { Account, CreditAccountMutation } from '../API';
 import { useGraphQLMutaion, useGraphQLQuery } from '../lib/graphQL';
 import { v4 } from 'uuid';
 import { useQueryClient } from 'react-query';
+import { API, graphqlOperation } from 'aws-amplify';
+import { openedAccount, updatedAccount } from '../graphql/subscriptions';
 
 function Dashboard() {
   const queryClient = useQueryClient();
@@ -34,8 +36,16 @@ function Dashboard() {
   const { mutateAsync } = useGraphQLMutaion<
     OpenAccountData,
     OpenAccountVariables
-  >(openAccount, {
-    onSuccess: () => queryClient.invalidateQueries(['getAllAccounts']),
+  >(openAccount);
+
+  useEffect(() => {
+    API.graphql(graphqlOperation(openedAccount)).subscribe({
+      next: () => queryClient.invalidateQueries(['getAllAccounts']),
+    });
+  
+    API.graphql(graphqlOperation(updatedAccount)).subscribe({
+      next: () => queryClient.invalidateQueries(['getAllAccounts']),
+    });
   });
 
   return (
@@ -86,21 +96,16 @@ function AccountsTable(props: { accounts: Account[] }) {
 function AccountPanel(props: { accounts: Account[] }) {
   const [currentId, setCurrentId] = useState<string>(props.accounts[0]?.id);
   const [amount, setAmount] = useState(100);
-  const queryClient = useQueryClient();
 
   const { mutateAsync: creditMutation } = useGraphQLMutaion<
     CreditAccountMutation,
     UpdateAccountVariables
-  >(creditAccount, {
-    onSuccess: () => queryClient.invalidateQueries(['getAllAccounts']), // somtimes load old data
-  });
+  >(creditAccount);
 
   const { mutateAsync: debitMutation } = useGraphQLMutaion<
     DebitAccountData,
     UpdateAccountVariables
-  >(debitAccount, {
-    onSuccess: () => queryClient.invalidateQueries(['getAllAccounts']),
-  });
+  >(debitAccount);
 
   const creditAccountAction = async () => {
     if (!currentId || !amount) return;
