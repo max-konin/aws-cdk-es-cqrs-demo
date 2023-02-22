@@ -1,7 +1,7 @@
 import { ACCOUNT_CREDITED_EVENT_TYPE } from '../../events';
 import { Event } from '../../framework/event';
 
-interface AccountCreditedEventData {
+export interface AccountCreditedEventData {
   accountId: string;
   amount: number;
   issuer: {
