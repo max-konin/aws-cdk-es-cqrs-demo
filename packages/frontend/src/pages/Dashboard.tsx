@@ -21,32 +21,58 @@ import {
 } from '../graphql/mutations';
 import { getAllAccounts, GetAllAccountsData } from '../graphql/queries';
 import { Account, CreditAccountMutation } from '../API';
-import { useGraphQLMutaion, useGraphQLQuery } from '../lib/graphQL';
+import {
+  useGraphQLMutaion,
+  useGraphQLQuery,
+  useGraphQLSubscription,
+} from '../lib/graphQL';
 import { v4 } from 'uuid';
 import { useQueryClient } from 'react-query';
-import { API, graphqlOperation } from 'aws-amplify';
-import { openedAccount, updatedAccount } from '../graphql/subscriptions';
+import {
+  openedAccount,
+  updatedAccount,
+  UpdatedAccountVariables,
+} from '../graphql/subscriptions';
+
+type Subscription = ZenObservable.Subscription;
 
 function Dashboard() {
   const queryClient = useQueryClient();
+
+  const [subscriptions, setSubscriptions] = useState<Subscription[]>([]);
+
+  useGraphQLSubscription(openedAccount, {
+    next: () => queryClient.invalidateQueries(['getAllAccounts']),
+  });
+
   const { data } = useGraphQLQuery<GetAllAccountsData>(
     ['getAllAccounts'],
-    getAllAccounts
+    getAllAccounts,
+    undefined,
+    {
+      onSuccess: ({ getAllAccounts }) => {
+        subscriptions.forEach((s) => s.unsubscribe());
+        setSubscriptions(
+          getAllAccounts
+            .map((a) =>
+              useGraphQLSubscription<{}, UpdatedAccountVariables>(
+                updatedAccount,
+                {
+                  next: () => queryClient.invalidateQueries(['getAllAccounts']),
+                },
+                { id: a.id }
+              )
+            )
+            .filter((s): s is Subscription => !!s)
+        );
+      },
+    }
   );
+
   const { mutateAsync } = useGraphQLMutaion<
     OpenAccountData,
     OpenAccountVariables
   >(openAccount);
-
-  useEffect(() => {
-    API.graphql(graphqlOperation(openedAccount)).subscribe({
-      next: () => queryClient.invalidateQueries(['getAllAccounts']),
-    });
-  
-    API.graphql(graphqlOperation(updatedAccount)).subscribe({
-      next: () => queryClient.invalidateQueries(['getAllAccounts']),
-    });
-  });
 
   return (
     <div>

@@ -15,9 +15,11 @@ specifiers:
   '@types/react-router': ^5.1.20
   '@types/react-router-dom': ^5.3.3
   '@types/uuid': ^9.0.0
+  '@types/zen-observable': ^0.8.3
   '@vitejs/plugin-react': ^3.0.0
   aws-amplify: ^5.0.11
   graphql: ^16.6.0
+  lodash: ^4.17.21
   notistack: ^2.0.8
   react: ^18.2.0
   react-dom: ^18.2.0
@@ -41,8 +43,10 @@ dependencies:
   '@mui/icons-material': 5.11.0_m3y2ykptchyoygtoroit6l3ehq
   '@mui/lab': 5.0.0-alpha.118_fmcb73g2fj7ijupodkeaypqkh4
   '@mui/material': 5.11.7_rqh7qj4464ntrqrt6banhaqg4q
+  '@types/zen-observable': 0.8.3
   aws-amplify: 5.0.11
   graphql: 16.6.0
+  lodash: 4.17.21
   notistack: 2.0.8_qo5tbv3wjsnulj3odbgeoxieku
   react: 18.2.0
   react-dom: 18.2.0_react@18.2.0
@@ -3946,6 +3950,10 @@ packages:
   /@types/uuid/9.0.0:
     resolution: {integrity: sha512-kr90f+ERiQtKWMz5rP32ltJ/BtULDI5RVO0uavn1HQUOwjx0R1h0rnDYNL0CepF1zL5bSY6FISAfd9tOdDhU5Q==}
     dev: true
+
+  /@types/zen-observable/0.8.3:
+    resolution: {integrity: sha512-fbF6oTd4sGGy0xjHPKAt+eS2CrxJ3+6gQ3FGcBoIJR2TLAyCkCyI8JqZNy+FeON0AhVgNJoUumVoZQjBFUqHkw==}
+    dev: false
 
   /@vitejs/plugin-react/3.0.1_vite@4.0.4:
     resolution: {integrity: sha512-mx+QvYwIbbpOIJw+hypjnW1lAbKDHtWK5ibkF/V1/oMBu8HU/chb+SnqJDAsLq1+7rGqjktCEomMTM5KShzUKQ==}
