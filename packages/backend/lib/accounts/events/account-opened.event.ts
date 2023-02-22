@@ -1,7 +1,7 @@
 import { ACCOUNT_OPENED_EVENT_TYPE } from '../../events';
 import { Event } from '../../framework/event';
 
-interface AccountOpenedEventData {
+export interface AccountOpenedEventData {
   accountId: string;
 }
 

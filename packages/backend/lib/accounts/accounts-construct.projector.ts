@@ -1,7 +1,17 @@
 import * as AWS from 'aws-sdk';
 import { Record } from 'aws-sdk/clients/dynamodbstreams';
-import { eventsRegistry } from '../events-registry';
+import { AccountEventData, eventsRegistry } from '../events-registry';
 import { projector } from './projectors/accounts';
+
+interface Image<T> {
+  createdAt: string;
+  data: T
+  eventName: string;
+  correlationId: string;
+  entityId: string;
+  id: string;
+  timestamp: number;
+}
 
 
 interface AWSEvent {
@@ -39,7 +49,7 @@ export const handler = async (awsEvent: AWSEvent) => {
 
       return newImage;
     })
-    .filter((e) => e)
+    .filter((r): r is Image<AccountEventData> => !!r)
     .sort((a, b) => a?.timestamp - b?.timestamp)
     .map((record) => new eventsRegistry[record?.eventName](record?.data));
 

@@ -1,7 +1,7 @@
 import { ACCOUNT_DEBITED_EVENT_TYPE } from '../../events';
 import { Event } from '../../framework/event';
 
-interface AccountDebitedEventData {
+export interface AccountDebitedEventData {
   accountId: string;
   amount: number;
 }
